@@ -1,13 +1,24 @@
 import { createTheme } from "@mui/material/styles";
-import type { Theme } from "@mui/material/styles";
 import { palettes } from "./palette";
+import { getScrollbarStyles } from "./components/scrollBar";
 
 export type ThemeMode = "light" | "dark" | "violet";
 
-export const getTheme = (mode: ThemeMode): Theme => {
-  return createTheme({
+export const getTheme = (mode: ThemeMode) =>
+  createTheme({
     palette: palettes[mode] ?? palettes.dark,
 
+    breakpoints: {
+      values: {
+        xs: 0, // mobile
+        mobile: 650, // mobile
+        sm: 800, // tablet
+        md: 1024, // small laptop
+        lg: 1280, // desktop
+        xl: 1536, // large screens
+        xxl: 1700,
+      },
+    },
     typography: {
       fontFamily: "Poppins, Arial, sans-serif",
 
@@ -21,5 +32,17 @@ export const getTheme = (mode: ThemeMode): Theme => {
         textTransform: "none",
       },
     },
+    components: {
+      MuiCssBaseline: {
+        styleOverrides: {
+          body: {
+            ...getScrollbarStyles({ palette: palettes[mode] }),
+          },
+
+          "*": {
+            ...getScrollbarStyles({ palette: palettes[mode] }),
+          },
+        },
+      },
+    },
   });
-};
