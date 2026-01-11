@@ -18,7 +18,7 @@ import AddBoard from "../dialogs/addBoard";
 import NeedHelpDialog from "../dialogs/needHelp";
 import LogOutDialog from "../dialogs/logOut";
 import { iconLogo } from "../../lib/utils";
-import ListItemSkeleton from "./skeleton";
+import ListItemSkeleton from "../../lib/skeleton";
 
 export interface SidebarParams {
   boards: BoardParams[];

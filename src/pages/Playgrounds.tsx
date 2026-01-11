@@ -7,7 +7,9 @@ import EditBoard from "../components/dialogs/editBoard";
 import Filter from "../components/dashboard/filter";
 import MoveMenu from "../components/dashboard/cardForwarder";
 import { StyledButton } from "../lib/styled";
-import ListItemSkeleton from "../components/sidebar/skeleton";
+import ListItemSkeleton from "../lib/skeleton";
+import { useEffect } from "react";
+import { getAllTasks } from "../api/dashboard";
 
 export default function Playground() {
   /* -------------------------------- variables ------------------------------- */
@@ -19,6 +21,14 @@ export default function Playground() {
     background: "1",
     boardId: "14314141",
   };
+
+  useEffect(() => {
+    const asdasd = async () => {
+      const data = await getAllTasks();
+      console.log(data);
+    };
+    asdasd();
+  }, []);
 
   return (
     <>
