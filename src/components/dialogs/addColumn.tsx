@@ -4,29 +4,37 @@ import { Field, Form, Formik, type FormikHelpers } from "formik";
 import { StyledTextField } from "../../lib/styled";
 
 import { StyledAddButton } from "../button";
+import { addColumnApi, type AddColumnType } from "../../api/dashboard";
 
 interface Params {
   isOpen: boolean;
   onClose: () => void;
-}
-
-interface AddColumn {
-  title: string;
+  boardId: string;
 }
 
 export default function AddColumnDialog(params: Params) {
-  const { isOpen, onClose } = params;
+  const { isOpen, onClose, boardId } = params;
 
   /* -------------------------------- variables ------------------------------- */
   const theme = useTheme();
 
   /* --------------------------------- handler -------------------------------- */
-  const handleSubmit = (
-    values: AddColumn,
-    actions: FormikHelpers<AddColumn>
+  const handleSubmit = async (
+    values: AddColumnType,
+    actions: FormikHelpers<AddColumnType>
   ) => {
-    console.log(values);
-    actions.resetForm();
+    try {
+      console.log(values);
+      const res = await addColumnApi(values);
+
+      if (res?.success) {
+        console.log("sıkıntı kardeşim ya");
+      }
+      actions.resetForm();
+      onClose();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -52,9 +60,10 @@ export default function AddColumnDialog(params: Params) {
       <Stack p={3} direction={"column"} spacing={1}>
         <Typography>Add Column</Typography>
         <Stack>
-          <Formik<AddColumn>
+          <Formik<AddColumnType>
             initialValues={{
-              title: "",
+              boardId: boardId,
+              name: "",
             }}
             onSubmit={handleSubmit}
           >
@@ -62,7 +71,7 @@ export default function AddColumnDialog(params: Params) {
               <Stack spacing={3} mt={3}>
                 <Field
                   as={StyledTextField}
-                  name="title"
+                  name="name"
                   type="text"
                   variant="outlined"
                   placeholder="Title"
@@ -72,7 +81,7 @@ export default function AddColumnDialog(params: Params) {
                     maxHeight: 49,
                   }}
                 />
-                <StyledAddButton title="Add" />
+                <StyledAddButton title="Add" type="submit" />
               </Stack>
             </Form>
           </Formik>

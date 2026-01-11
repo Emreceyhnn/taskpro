@@ -9,26 +9,21 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import { PRIORITIES, type CardParams } from "../../lib/types";
-import { arrowCircle } from "../../lib/utils";
+import { PRIORITIES, type ColumnNames } from "../../lib/types";
+import { arrowCircle, formatDateDayjs, type Task } from "../../lib/utils";
 import { useState } from "react";
 import EditCardDialog from "../dialogs/editCard";
 import DeleteCardDialog from "../dialogs/deleteCard";
 import MoveMenu from "./cardForwarder";
 
-export default function Card(params: CardParams) {
+interface TaskSectionType {
+  tasks: Task;
+  columnNames: ColumnNames[];
+}
+
+export default function Card(params: TaskSectionType) {
   /* --------------------------------- params --------------------------------- */
-  const {
-    title,
-    cardId,
-    description,
-    priorities,
-    deadline,
-    isClose,
-    columnNames,
-    columnId,
-    boardId,
-  } = params;
+  const { columnNames, tasks } = params;
 
   /* -------------------------------- variables ------------------------------- */
   const theme = useTheme();
@@ -45,6 +40,8 @@ export default function Card(params: CardParams) {
   const deleteHandler = () => {
     setDeleteDialog(false);
   };
+
+  const isClose = true;
 
   return (
     <>
@@ -75,7 +72,7 @@ export default function Card(params: CardParams) {
               color: theme.palette.text.primary,
             }}
           >
-            {title}
+            {tasks.title}
           </Typography>
           <Typography
             sx={{
@@ -91,7 +88,7 @@ export default function Card(params: CardParams) {
               overflow: "hidden",
             }}
           >
-            {description}
+            {tasks.description}
           </Typography>
           <Divider
             sx={{
@@ -123,7 +120,8 @@ export default function Card(params: CardParams) {
                     sx={{
                       width: 12,
                       height: 12,
-                      backgroundColor: PRIORITIES[priorities],
+                      backgroundColor:
+                        PRIORITIES[tasks.priority as keyof typeof PRIORITIES],
                       borderRadius: "50%",
                     }}
                   />
@@ -134,7 +132,7 @@ export default function Card(params: CardParams) {
                       color: theme.palette.text.primary,
                     }}
                   >
-                    {priorities}
+                    {tasks.priority}
                   </Typography>
                 </Stack>
               </Stack>
@@ -157,7 +155,7 @@ export default function Card(params: CardParams) {
                       color: theme.palette.text.primary,
                     }}
                   >
-                    {deadline}
+                    {formatDateDayjs(tasks.deadline.toString())}
                   </Typography>
                 </Stack>
               </Stack>
@@ -219,15 +217,15 @@ export default function Card(params: CardParams) {
             borderRadius: "8px 0 0 8px",
             top: 0,
             left: 0,
-            bgcolor: PRIORITIES[priorities],
+            bgcolor: PRIORITIES[tasks.priority as keyof typeof PRIORITIES],
           }}
         />
       </Box>
       <DeleteCardDialog
         open={isDeleteDialog}
         onClose={deleteHandler}
-        cardId={cardId}
-        cardTitle={title}
+        cardId={tasks._id}
+        cardTitle={tasks.title}
       />
     </>
   );

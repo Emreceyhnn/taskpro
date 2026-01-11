@@ -7,6 +7,7 @@ import {
   StyledTextFieldMultiLine,
 } from "../../lib/styled";
 
+/* ---------------------------------- TYPES --------------------------------- */
 interface Params {
   isOpen: boolean;
   onClose: () => void;

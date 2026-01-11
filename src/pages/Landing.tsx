@@ -2,6 +2,7 @@ import { Box, Button, Stack, Typography } from "@mui/material";
 import landingHero from "../assets/authpage.png";
 import logo from "../assets/icon.svg";
 import { getGoogleOAuthUrl } from "../api/auth";
+import { Link as RouterLink } from "react-router-dom";
 
 export default function LandingPage() {
   const handleGoogleLogin = async () => {
@@ -58,6 +59,8 @@ export default function LandingPage() {
 
           <Stack spacing={1}>
             <Button
+              component={RouterLink}
+              to="/auth/sign-up"
               variant="contained"
               sx={{
                 minWidth: 370,
@@ -73,6 +76,8 @@ export default function LandingPage() {
               Register
             </Button>
             <Button
+              component={RouterLink}
+              to="/auth/sign-in"
               variant="text"
               sx={{
                 minWidth: 370,

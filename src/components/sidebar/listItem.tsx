@@ -1,14 +1,13 @@
 import { Box, IconButton, Stack, Typography, useTheme } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { icons } from "../../lib/utils";
-import type { BoardParams } from "../../lib/types";
+import { icons, type BoardWithColumns } from "../../lib/utils";
 import DeleteBoardDialog from "../dialogs/deleteBoard";
 import { useState } from "react";
 import EditBoard from "../dialogs/editBoard";
 
 export interface SideBarListItemType {
-  board: BoardParams;
+  board: BoardWithColumns;
   isActive: boolean;
   onClick: () => void;
 }
@@ -29,11 +28,11 @@ export default function SideBarListItem({
   const [isDeleteDialogOpen, SetDeleteDialogOpen] = useState<boolean>(false);
 
   /* --------------------------------- HANDLER -------------------------------- */
-  const editHandlerClose = () => {
+  const handleEditDialogClose = () => {
     SetEditDialogOpen(false);
   };
 
-  const deleteHandlerClose = () => {
+  const handleDeleteDialogClose = () => {
     SetDeleteDialogOpen(false);
   };
 
@@ -122,14 +121,14 @@ export default function SideBarListItem({
       </Box>
       <EditBoard
         isOpen={isEditDialogOpen}
-        onClose={editHandlerClose}
+        onClose={handleEditDialogClose}
         board={board}
       />
       <DeleteBoardDialog
-        boardId={board.boardId}
+        boardId={board._id}
         boardTitle={board.title}
         open={isDeleteDialogOpen}
-        onClose={deleteHandlerClose}
+        onClose={handleDeleteDialogClose}
       />
     </>
   );

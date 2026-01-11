@@ -12,30 +12,31 @@ import SideBarListItem from "./listItem";
 import LogoutIcon from "@mui/icons-material/Logout";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import plant from "../../assets/plant.png";
-import type { BoardParams } from "../../lib/types";
 import { useState } from "react";
 import AddBoard from "../dialogs/addBoard";
 import NeedHelpDialog from "../dialogs/needHelp";
 import LogOutDialog from "../dialogs/logOut";
-import { iconLogo } from "../../lib/utils";
+import { iconLogo, type BoardWithColumns } from "../../lib/utils";
 import ListItemSkeleton from "../../lib/skeleton";
 
 export interface SidebarParams {
-  boards: BoardParams[];
-  onChange: (board: BoardParams) => void;
+  boards: BoardWithColumns[] | null;
+  onChange: (board: BoardWithColumns | null) => void;
 }
 
 export default function SideBar({ boards, onChange }: SidebarParams) {
+  /* --------------------------------- STATES --------------------------------- */
   const [activeBoardId, setActiveBoardId] = useState<string>("");
   const [addBoardDialog, setAddBoardDialog] = useState<boolean>(false);
   const [needHelpDialog, setNeedHelpDialog] = useState<boolean>(false);
   const [logOutDialog, setLogOutDialog] = useState<boolean>(false);
 
+  /* -------------------------------- VARIABLE -------------------------------- */
   const theme = useTheme();
 
   /* -------------------------------- HANDLERS -------------------------------- */
-  const handleSelectBoard = (board: BoardParams) => {
-    setActiveBoardId(board.boardId);
+  const handleSelectBoard = (board: BoardWithColumns) => {
+    setActiveBoardId(board._id);
     onChange(board);
   };
 
@@ -146,9 +147,9 @@ export default function SideBar({ boards, onChange }: SidebarParams) {
           {boards
             ? boards.map((board) => (
                 <SideBarListItem
-                  key={board.boardId}
+                  key={board._id}
                   board={board}
-                  isActive={activeBoardId === board.boardId}
+                  isActive={activeBoardId === board._id}
                   onClick={() => handleSelectBoard(board)}
                 />
               ))

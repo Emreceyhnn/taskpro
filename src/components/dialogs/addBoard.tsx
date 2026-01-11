@@ -1,5 +1,4 @@
 import {
-  Box,
   Dialog,
   FormControlLabel,
   FormLabel,
@@ -18,21 +17,15 @@ import {
   type FieldProps,
   type FormikHelpers,
 } from "formik";
-import { StyledButton, StyledTextField } from "../../lib/styled";
-import AddIcon from "@mui/icons-material/Add";
+import { StyledTextField } from "../../lib/styled";
 
 import { icons, backgrounds } from "../../lib/utils";
 import { StyledAddButton } from "../button";
+import { addBoardApi, type AddBoardType } from "../../api/dashboard";
 
 interface Params {
   isOpen: boolean;
   onClose: () => void;
-}
-
-interface AddBoard {
-  title: string;
-  icon: string;
-  background: string;
 }
 
 export default function AddBoard(params: Params) {
@@ -42,8 +35,11 @@ export default function AddBoard(params: Params) {
   const theme = useTheme();
 
   /* --------------------------------- handler -------------------------------- */
-  const handleSubmit = (values: AddBoard, actions: FormikHelpers<AddBoard>) => {
-    console.log(values);
+  const handleSubmit = async (
+    values: AddBoardType,
+    actions: FormikHelpers<AddBoardType>
+  ) => {
+    await addBoardApi(values);
     actions.resetForm();
   };
 
@@ -126,7 +122,7 @@ export default function AddBoard(params: Params) {
       <Stack p={3} direction={"column"} spacing={1}>
         <Typography>New Board</Typography>
         <Stack>
-          <Formik<AddBoard>
+          <Formik<AddBoardType>
             initialValues={{
               title: "",
               icon: icons[0].value,
@@ -221,7 +217,7 @@ export default function AddBoard(params: Params) {
                     )}
                   </Field>
                 </Stack>
-                <StyledAddButton title="Create" />
+                <StyledAddButton title="Create" type="submit" />
               </Stack>
             </Form>
           </Formik>

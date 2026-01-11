@@ -1,50 +1,46 @@
-import { Box, Stack, useTheme } from "@mui/material";
+import { Box, Dialog, useTheme } from "@mui/material";
 
-import SideBar from "../components/sidebar/main";
-import Header from "../components/header/main";
+import { useState } from "react";
+import ComponentFirst from "../TESTS/comp1";
+import DialogForm from "../TESTS/comp1 copy";
 
-import EditBoard from "../components/dialogs/editBoard";
-import Filter from "../components/dashboard/filter";
-import MoveMenu from "../components/dashboard/cardForwarder";
-import { StyledButton } from "../lib/styled";
-import ListItemSkeleton from "../lib/skeleton";
-import { useEffect } from "react";
-import { getAllTasks } from "../api/dashboard";
+export interface DialogData {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+}
 
 export default function Playground() {
-  /* -------------------------------- variables ------------------------------- */
-  const theme = useTheme();
+  const [open, setOpen] = useState(false);
+  const [activeItem, setActiveItem] = useState<DialogData | null>(null);
 
-  const item = {
-    title: "project",
-    icon: "projectIcon",
-    background: "1",
-    boardId: "14314141",
+  const handleOpenDialog = (data: DialogData) => {
+    setActiveItem(data); // 🔥 hangi child tıklandı
+    setOpen(true); // 🔥 dialog aç
   };
 
-  useEffect(() => {
-    const asdasd = async () => {
-      const data = await getAllTasks();
-      console.log(data);
-    };
-    asdasd();
-  }, []);
-
+  const handleClose = () => {
+    setOpen(false);
+    setActiveItem(null);
+  };
+  const items: DialogData[] = [
+    { id: "1", title: "A", description: "AA", date: "2026-01-01" },
+    { id: "2", title: "B", description: "BB", date: "2026-01-02" },
+  ];
   return (
     <>
-      <Box
-        bgcolor={theme.palette.background.paper}
-        sx={{
-          width: "100vw",
-          height: "100vh",
-          flexDirection: "row",
-          display: "flex",
-        }}
-      >
-        <Box>
-          <ListItemSkeleton />
-        </Box>
-      </Box>
+      {items.map((item) => (
+        <ComponentFirst
+          key={item.id}
+          data={item}
+          onOpenDialog={handleOpenDialog}
+        />
+      ))}
+
+      <Dialog open={open} onClose={handleClose}>
+        {activeItem && <DialogForm initialValues={activeItem} />}
+      </Dialog>
     </>
   );
 }

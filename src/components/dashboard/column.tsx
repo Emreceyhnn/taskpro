@@ -1,17 +1,23 @@
 import { Box, IconButton, Stack, Typography, useTheme } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import type { ColumnsParams } from "../../lib/types";
 import Card from "./card";
 import { useState } from "react";
 import AddCardDialog from "../dialogs/addCard";
 import EditColumnDialog from "../dialogs/editColumn";
 import DeleteColumnDialog from "../dialogs/deleteColumn";
 import { StyledAddButton } from "../button";
+import type { ColumnWithTask } from "../../lib/utils";
+import type { ColumnNames } from "../../lib/types";
 
-export default function Column(params: ColumnsParams) {
+interface ColumnsSectionsType {
+  columns: ColumnWithTask;
+  columnNames: ColumnNames[];
+}
+
+export default function Column(params: ColumnsSectionsType) {
   /* --------------------------------- params --------------------------------- */
-  const { columnId, title, cards, columnNames } = params;
+  const { columns, columnNames } = params;
 
   /* --------------------------------- STATES --------------------------------- */
   const [isEditDialog, setEditDialog] = useState<boolean>(false);
@@ -62,7 +68,7 @@ export default function Column(params: ColumnsParams) {
               color: theme.palette.text.primary,
             }}
           >
-            {title}
+            {columns.name}
           </Typography>
           <Stack direction={"row"} spacing={1} alignItems={"center"}>
             <IconButton
@@ -98,8 +104,8 @@ export default function Column(params: ColumnsParams) {
             paddingBlock={2}
             sx={{ overflowY: "auto", overflowX: "hidden" }}
           >
-            {cards.map((i) => (
-              <Card key={i.cardId} {...i} columnNames={columnNames} />
+            {columns.tasks.map((i) => (
+              <Card key={i._id} tasks={i} columnNames={columnNames} />
             ))}
           </Stack>
         </Stack>
@@ -115,21 +121,22 @@ export default function Column(params: ColumnsParams) {
       <AddCardDialog
         isOpen={isAddDialog}
         onClose={addCardHandler}
-        columnId={columnId}
+        columnId={columns._id}
+        boardId={columns.boardId}
       />
 
       <EditColumnDialog
         isOpen={isEditDialog}
         onClose={editHandler}
-        columnId={columnId}
-        title={title}
+        columnId={columns._id}
+        title={columns.name}
       />
 
       <DeleteColumnDialog
         open={isDeleteDialog}
         onClose={deleteHandler}
-        columnId={columnId}
-        columnTitle={title}
+        columnId={columns._id}
+        columnTitle={columns.name}
       />
     </>
   );

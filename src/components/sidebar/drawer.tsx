@@ -7,12 +7,15 @@ interface Props {
 }
 
 export default function DrawerSideBar({ children }: Props) {
+  /* ---------------------------------- STATE --------------------------------- */
   const [open, setOpen] = useState<boolean>(false);
 
+  /* --------------------------------- TOGGLE --------------------------------- */
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
 
+  /* -------------------------------- VARIABLE -------------------------------- */
   const theme = useTheme();
 
   return (

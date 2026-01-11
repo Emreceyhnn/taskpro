@@ -12,26 +12,28 @@ import { useState } from "react";
 import avatar from "../../assets/desktop/1.png";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useThemeMode } from "../../lib/ThemeContext";
-import type { BoardParams } from "../../lib/types";
-import SideBar from "../sidebar/main";
+import SideBar from "../sidebar";
 import DrawerSideBar from "../sidebar/drawer";
+import type { BoardWithColumns } from "../../lib/utils";
 
 const themes = ["dark", "light", "violet"] as const;
 
 export interface HeaderParams {
-  boards: BoardParams[];
-  onChange: (board: BoardParams) => void;
+  boards: BoardWithColumns[] | null;
+  onChange: (board: BoardWithColumns | null) => void;
 }
 
 export default function Header(params: HeaderParams) {
+  /* -------------------------------- VARIABLES ------------------------------- */
   const theme = useTheme();
   const isTabletView = useMediaQuery(theme.breakpoints.down("md"));
 
+  /* --------------------------------- STATES --------------------------------- */
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { mode, setMode } = useThemeMode();
-
   const open = Boolean(anchorEl);
 
+  /* -------------------------------- HANDLERS -------------------------------- */
   const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };

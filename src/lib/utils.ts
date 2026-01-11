@@ -1,4 +1,10 @@
 import sprite from "../assets/sprite.svg";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const iconArrow = `${sprite}#icon-arrow-circle-broken-right`;
 const iconContainer = `${sprite}#icon-container`;
@@ -10,10 +16,6 @@ const iconColors = `${sprite}#icon-colors`;
 const iconLightning = `${sprite}#icon-lightning-02`;
 const iconStar = `${sprite}#icon-star-04`;
 export const iconLogo = `${sprite}#icon-logo`;
-
-// <svg width="20" height="20">
-//         <use href="src/img/sprite.svg#icon-search-3"></use>
-//       </svg>
 
 import _1 from "../assets/desktop/1.png";
 import _2 from "../assets/desktop/2.jpg";
@@ -68,3 +70,60 @@ export const backgrounds = [
   { key: "15", value: _15 },
   { key: "16", value: _16 },
 ];
+
+type Board = {
+  _id: string;
+  title: string;
+  userId: string;
+  icon: string;
+  background: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type Column = {
+  _id: string;
+  boardId: string;
+  name: string;
+  order: number;
+};
+
+export type Task = {
+  _id: string;
+  boardId: string;
+  columnId: string;
+  title: string;
+  description: string;
+  priority: string;
+  deadline: Date;
+};
+
+export type BoardWithColumns = Board & {
+  columns: (Column & { tasks: Task[] })[];
+};
+
+export type ColumnWithTask = Column & { tasks: Task[] };
+
+export function mergeBoardData(
+  boards: Board[],
+  columns: Column[],
+  tasks: Task[]
+): BoardWithColumns[] {
+  return boards.map((board) => {
+    const boardColumns = columns
+      .filter((col) => col.boardId === board._id)
+      .map((col) => ({
+        ...col,
+        tasks: tasks.filter((task) => task.columnId === col._id),
+      }));
+
+    return {
+      ...board,
+      columns: boardColumns,
+    };
+  });
+}
+
+export const formatDateDayjs = (value: string) => {
+  return dayjs.utc(value).tz("Europe/Istanbul").format("DD.MM.YYYY HH:mm");
+};

@@ -19,14 +19,13 @@ import {
 } from "formik";
 import { StyledTextField } from "../../lib/styled";
 
-import { icons, backgrounds } from "../../lib/utils";
-import type { BoardParams } from "../../lib/types";
+import { icons, backgrounds, type BoardWithColumns } from "../../lib/utils";
 import { StyledAddButton } from "../button";
 
 interface Params {
   isOpen: boolean;
   onClose: () => void;
-  board: BoardParams;
+  board: BoardWithColumns;
 }
 
 interface AddBoard {

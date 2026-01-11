@@ -8,20 +8,29 @@ import {
   useTheme,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { logout } from "../../api/auth";
+import { useNavigate } from "react-router-dom";
 
+/* ---------------------------------- TYPES --------------------------------- */
 interface Params {
   open: boolean;
   onClose: () => void;
 }
 
 export default function LogOutDialog(params: Params) {
-  /* -------------------------------- variables ------------------------------- */
+  /* -------------------------------- VARIABLES ------------------------------- */
   const theme = useTheme();
+  const navigate = useNavigate();
 
-  /* --------------------------------- handler -------------------------------- */
+  /* --------------------------------- HANDLERS -------------------------------- */
 
-  const handleLogOut = () => {
-    console.log("logout");
+  const handleLogOut = async () => {
+    try {
+      await logout();
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <Dialog

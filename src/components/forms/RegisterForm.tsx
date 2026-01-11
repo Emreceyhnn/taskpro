@@ -1,5 +1,5 @@
 import * as Yup from "yup";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -14,6 +14,7 @@ import { useState } from "react";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { StyledTextFieldAuth } from "../../lib/styled";
+import { register } from "../../api/auth";
 
 interface RegisterFormValues {
   name: string;
@@ -22,12 +23,31 @@ interface RegisterFormValues {
 }
 
 export default function RegisterForm() {
-  const handleSubmit = (
+  /* -------------------------------- VARIABLES ------------------------------- */
+  const navigate = useNavigate();
+
+  /* --------------------------------- STATES --------------------------------- */
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  /* -------------------------------- HANDLERS -------------------------------- */
+  const handleSubmit = async (
     values: RegisterFormValues,
     actions: FormikHelpers<RegisterFormValues>
   ) => {
-    console.log(values);
-    actions.resetForm();
+    try {
+      const res = await register(values);
+      if (res?.success) {
+        navigate("/auth/sign-in");
+      }
+
+      actions.resetForm();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   /* ------------------------------- validation ------------------------------- */
@@ -40,12 +60,6 @@ export default function RegisterForm() {
       .min(6, "Minimum 6 characters")
       .required("Password is required"),
   });
-
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-
-  const handleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
 
   return (
     <Box

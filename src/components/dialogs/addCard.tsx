@@ -17,24 +17,19 @@ import { Field, Form, Formik, type FormikHelpers } from "formik";
 import type { FieldProps } from "formik";
 import { StyledTextField, StyledTextFieldMultiLine } from "../../lib/styled";
 import FormikDatePicker from "../datePicker";
-import dayjs, { type Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { StyledAddButton } from "../button";
+import { addCardApi, type AddCardType } from "../../api/dashboard";
 
 interface Params {
   isOpen: boolean;
   onClose: () => void;
+  boardId: string;
   columnId: string;
 }
 
-interface AddCard {
-  title: string;
-  description: string;
-  priority: "high" | "medium" | "low" | "none" | "";
-  deadline: Dayjs | null;
-}
-
 export default function AddCardDialog(params: Params) {
-  const { isOpen, onClose, columnId } = params;
+  const { isOpen, onClose, columnId, boardId } = params;
 
   /* -------------------------------- variables ------------------------------- */
   const theme = useTheme();
@@ -46,11 +41,22 @@ export default function AddCardDialog(params: Params) {
   ] as const;
 
   /* --------------------------------- handler -------------------------------- */
-  const handleSubmit = (values: AddCard, actions: FormikHelpers<AddCard>) => {
-    console.log(values);
-    actions.resetForm();
-  };
+  const handleSubmit = async (
+    values: AddCardType,
+    actions: FormikHelpers<AddCardType>
+  ) => {
+    try {
+      const res = await addCardApi(values);
 
+      if (res?.success) {
+        console.log("sıkıntı kardeşim ya");
+      }
+      actions.resetForm();
+      onClose();
+    } catch (error) {
+      console.error(error);
+    }
+  };
   /* ------------------------------- components ------------------------------- */
 
   const UncheckedIcon = (color: string) => (
@@ -113,8 +119,10 @@ export default function AddCardDialog(params: Params) {
       <Stack p={3} direction={"column"} spacing={1}>
         <Typography color={theme.palette.text.primary}>Add Card</Typography>
         <Stack>
-          <Formik<AddCard>
+          <Formik<AddCardType>
             initialValues={{
+              columnId: columnId,
+              boardId: boardId,
               title: "",
               description: "",
               priority: "",

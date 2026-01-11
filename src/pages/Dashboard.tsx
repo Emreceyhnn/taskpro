@@ -1,26 +1,42 @@
 import { Box, Stack, useMediaQuery, useTheme } from "@mui/material";
 
-import SideBar from "../components/sidebar/main";
-import Header from "../components/header/main";
+import SideBar from "../components/sidebar";
+import Header from "../components/header";
 import Dashboard from "../components/dashboard/main";
-import { mockBoardData } from "../lib/data";
-import type { BoardParams } from "../lib/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BlankPage from "../components/dashboard/blank";
+import { getAllTasks } from "../api/dashboard";
+import { mergeBoardData } from "../lib/utils";
+import type { BoardWithColumns } from "../lib/utils";
 
 export default function DashboardPage() {
   /* --------------------------------- states --------------------------------- */
-  const [selectedBoard, setSelectedBoard] = useState<Partial<BoardParams>>({});
+  const [selectedBoard, setSelectedBoard] = useState<Partial<BoardWithColumns>>(
+    {}
+  );
+  const [dashboardData, setDashboardData] = useState<BoardWithColumns[] | null>(
+    null
+  );
 
   /* --------------------------------- handler -------------------------------- */
-  const handleSelectBoard = (board: BoardParams) => {
-    setSelectedBoard(board);
+  const handleSelectBoard = (board: BoardWithColumns | null) => {
+    setSelectedBoard(board || {});
   };
   /* -------------------------------- variables ------------------------------- */
   const theme = useTheme();
   const isTabletView = useMediaQuery(theme.breakpoints.down("md"));
 
-  const data = mockBoardData;
+  useEffect(() => {
+    const data = async () => {
+      const res = await getAllTasks();
+      const parsedValue =
+        mergeBoardData(res.boards, res.columns, res.tasks) ?? null;
+      setDashboardData(parsedValue);
+    };
+
+    data();
+  }, []);
+
   return (
     <>
       <Box
@@ -33,7 +49,7 @@ export default function DashboardPage() {
         }}
       >
         {!isTabletView && (
-          <SideBar boards={data} onChange={handleSelectBoard} />
+          <SideBar boards={dashboardData} onChange={handleSelectBoard} />
         )}
 
         <Stack
@@ -43,9 +59,9 @@ export default function DashboardPage() {
             width: "100%",
           }}
         >
-          <Header boards={data} onChange={handleSelectBoard} />
-          {selectedBoard.boardId ? (
-            <Dashboard {...(selectedBoard as BoardParams)} />
+          <Header boards={dashboardData} onChange={handleSelectBoard} />
+          {selectedBoard._id ? (
+            <Dashboard {...(selectedBoard as BoardWithColumns)} />
           ) : (
             <BlankPage />
           )}

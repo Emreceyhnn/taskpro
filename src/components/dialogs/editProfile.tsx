@@ -18,6 +18,8 @@ import PersonIcon from "@mui/icons-material/Person";
 import AddIcon from "@mui/icons-material/Add";
 import { StyledAddButton } from "../button";
 
+/* ---------------------------------- TYPES --------------------------------- */
+
 interface Params {
   isOpen: boolean;
   onClose: () => void;

@@ -1,14 +1,15 @@
 import { Box, Stack, Typography, useTheme } from "@mui/material";
 import Column from "./column";
-import type { BoardParams } from "../../lib/types";
+
 import { useState } from "react";
 import AddColumnDialog from "../dialogs/addColumn";
 import { StyledAddButtonVariant } from "../button";
 import Filter from "./filter";
+import type { BoardWithColumns } from "../../lib/utils";
 
-export default function Dashboard(params: BoardParams) {
+export default function Dashboard(params: BoardWithColumns) {
   /* --------------------------------- PARAMS --------------------------------- */
-  const { columns = [], title } = params;
+  const { columns = [], title, _id } = params;
 
   /* --------------------------------- STATES --------------------------------- */
   const [isAddDialogOpen, setAddDialogOpen] = useState<boolean>(false);
@@ -23,8 +24,8 @@ export default function Dashboard(params: BoardParams) {
   /* ---------------------------------- utils --------------------------------- */
 
   const columnsName = columns.map((i) => ({
-    title: i.title,
-    id: i.columnId,
+    title: i.name,
+    id: i._id,
   }));
 
   return (
@@ -57,7 +58,7 @@ export default function Dashboard(params: BoardParams) {
               width="100%"
             >
               {columns.map((i) => (
-                <Column key={i.columnId} {...i} columnNames={columnsName} />
+                <Column key={i._id} columnNames={columnsName} columns={i} />
               ))}
               <StyledAddButtonVariant
                 title="Add another column"
@@ -79,7 +80,11 @@ export default function Dashboard(params: BoardParams) {
           </Stack>
         </Box>
       </Stack>
-      <AddColumnDialog isOpen={isAddDialogOpen} onClose={dialogHandler} />
+      <AddColumnDialog
+        isOpen={isAddDialogOpen}
+        onClose={dialogHandler}
+        boardId={_id}
+      />
     </>
   );
 }

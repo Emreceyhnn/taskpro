@@ -1,5 +1,5 @@
 import * as Yup from "yup";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -14,6 +14,7 @@ import { useState } from "react";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { StyledTextFieldAuth } from "../../lib/styled";
+import { login } from "../../api/auth";
 
 interface LoginFormValues {
   email: string;
@@ -21,15 +22,29 @@ interface LoginFormValues {
 }
 
 export default function LoginForm() {
-  const handleSubmit = (
+  /* -------------------------------- VARIABLES ------------------------------- */
+  const navigate = useNavigate();
+
+  /* --------------------------------- STATES --------------------------------- */
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  /* -------------------------------- HANDLERS -------------------------------- */
+  const handleSubmit = async (
     values: LoginFormValues,
     actions: FormikHelpers<LoginFormValues>
   ) => {
-    console.log(values);
-    actions.resetForm();
-  };
+    try {
+      const res = await login(values);
 
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+      if (res?.success) {
+        navigate("/dashboard");
+      }
+
+      actions.resetForm();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -37,7 +52,6 @@ export default function LoginForm() {
 
   const LoginSchema = Yup.object({
     email: Yup.string().email("Invalid email").required("Email is required"),
-
     password: Yup.string().required("Password is required"),
   });
 
