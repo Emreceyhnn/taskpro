@@ -50,13 +50,13 @@ const patchHistoryOnce = () => {
   originalPushState = history.pushState;
   originalReplaceState = history.replaceState;
 
-  history.pushState = function (...args) {
-    originalPushState!.apply(this, args as any);
+  history.pushState = function (this: History, ...args) {
+    originalPushState!.apply(this, args);
     emitLocationChange();
   } as History["pushState"];
 
-  history.replaceState = function (...args) {
-    originalReplaceState!.apply(this, args as any);
+  history.replaceState = function (this: History, ...args) {
+    originalReplaceState!.apply(this, args);
     emitLocationChange();
   } as History["replaceState"];
 

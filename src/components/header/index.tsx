@@ -28,6 +28,8 @@ const themes = ["dark", "light", "violet"] as const;
 export interface HeaderParams {
   boards: BoardWithColumns[] | null;
   onChange: (board: BoardWithColumns | null) => void;
+  isEmpty: boolean;
+  onReset: () => void;
 }
 
 export default function Header(params: HeaderParams) {
@@ -92,7 +94,12 @@ export default function Header(params: HeaderParams) {
     >
       {isTabletView && (
         <DrawerSideBar>
-          <SideBar boards={params.boards} onChange={params.onChange} />
+          <SideBar
+            boards={params.boards}
+            onChange={params.onChange}
+            isEmpty={params.isEmpty}
+            onReset={params.onReset}
+          />
         </DrawerSideBar>
       )}
       <Stack spacing={2} direction="row" alignItems="center">

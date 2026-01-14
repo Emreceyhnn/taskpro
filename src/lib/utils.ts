@@ -1,5 +1,5 @@
 import sprite from "../assets/sprite.svg";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 
@@ -94,8 +94,8 @@ export type Task = {
   columnId: string;
   title: string;
   description: string;
-  priority: string;
-  deadline: Date;
+  priority: "high" | "medium" | "low" | "none" | "";
+  deadline: Dayjs | null;
 };
 
 export type BoardWithColumns = Board & {

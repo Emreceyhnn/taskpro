@@ -52,7 +52,7 @@ export default function Card(params: TaskSectionType) {
     onReset();
   };
 
-  const isToday = (date?: string | Date) => {
+  const isToday = (date?: string | Date | dayjs.Dayjs | null) => {
     if (!date) return false;
     return dayjs(date).isSame(dayjs(), "day");
   };

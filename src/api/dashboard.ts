@@ -1,5 +1,6 @@
 import { api } from "./client";
 import type { Dayjs } from "dayjs";
+import axios from "axios";
 
 export interface AddBoardType {
   title: string;
@@ -119,14 +120,16 @@ export const getAllTasks = async () => {
   try {
     const res = await api.get("/dashboard");
     return res.data;
-  } catch (error: any) {
-    if (error.response?.status === 404) {
-      return {
-        boards: [],
-        columns: [],
-        tasks: [],
-        isEmpty: true,
-      };
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        return {
+          boards: [],
+          columns: [],
+          tasks: [],
+          isEmpty: true,
+        };
+      }
     }
 
     throw error;
@@ -139,5 +142,5 @@ interface NeedHelpValues {
 }
 
 export const needHelpApi = async (data: NeedHelpValues) => {
-  console.log("yap burayı");
+  console.log(data);
 };

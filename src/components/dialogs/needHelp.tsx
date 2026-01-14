@@ -38,15 +38,13 @@ export default function NeedHelpDialog(params: Params) {
   ) => {
     try {
       setLoading(true);
-      const res = await needHelpApi(values);
-      if (res.status === 200) {
-        setLoading(false);
-      }
+      await needHelpApi(values);
       actions.resetForm();
     } catch (err) {
       console.log(err);
       setLoading(false);
     } finally {
+      setLoading(false);
       onClose();
     }
   };

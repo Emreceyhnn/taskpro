@@ -88,8 +88,11 @@ export default function DashboardPage() {
       <Box
         sx={{
           background:
-            bgKey && backgrounds[bgKey]
-              ? `url(${backgrounds[bgKey].value})`
+            bgKey &&
+            backgrounds[bgKey] &&
+            typeof backgrounds[bgKey] === "object" &&
+            "value" in backgrounds[bgKey]
+              ? `url(${(backgrounds[bgKey] as { value: string }).value})`
               : "none",
           backgroundSize: "cover",
           backgroundPosition: "center",
@@ -113,7 +116,12 @@ export default function DashboardPage() {
             width: "100%",
           }}
         >
-          <Header boards={dashboardData} onChange={handleSelectBoard} />
+          <Header
+            boards={dashboardData}
+            onChange={handleSelectBoard}
+            isEmpty={isEmpty}
+            onReset={handleReset}
+          />
           {isEmpty ? (
             <BlankPage />
           ) : selectedBoard ? (
