@@ -10,12 +10,14 @@ export interface SideBarListItemType {
   board: BoardWithColumns;
   isActive: boolean;
   onClick: () => void;
+  onReset: () => void;
 }
 
 export default function SideBarListItem({
   board,
   isActive,
   onClick,
+  onReset,
 }: SideBarListItemType) {
   /* --------------------------------- PARAMS --------------------------------- */
   const { title, icon } = board;
@@ -123,12 +125,14 @@ export default function SideBarListItem({
         isOpen={isEditDialogOpen}
         onClose={handleEditDialogClose}
         board={board}
+        onReset={onReset}
       />
       <DeleteBoardDialog
         boardId={board._id}
         boardTitle={board.title}
         open={isDeleteDialogOpen}
         onClose={handleDeleteDialogClose}
+        onReset={onReset}
       />
     </>
   );

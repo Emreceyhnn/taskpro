@@ -15,6 +15,7 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { StyledTextFieldAuth } from "../../lib/styled";
 import { register } from "../../api/auth";
+import CircularIndeterminate from "../loading";
 
 interface RegisterFormValues {
   name: string;
@@ -28,6 +29,7 @@ export default function RegisterForm() {
 
   /* --------------------------------- STATES --------------------------------- */
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   /* -------------------------------- HANDLERS -------------------------------- */
   const handleSubmit = async (
@@ -35,14 +37,17 @@ export default function RegisterForm() {
     actions: FormikHelpers<RegisterFormValues>
   ) => {
     try {
+      setLoading(true);
       const res = await register(values);
-      if (res?.success) {
+      if (res.status === 201) {
+        setLoading(false);
         navigate("/auth/sign-in");
       }
 
       actions.resetForm();
     } catch (error) {
       console.error(error);
+      setLoading(false);
     }
   };
 
@@ -58,6 +63,9 @@ export default function RegisterForm() {
 
     password: Yup.string()
       .min(6, "Minimum 6 characters")
+      .matches(/[a-z]/, "At least one lowercase letter required")
+      .matches(/[A-Z]/, "At least one uppercase letter required")
+      .matches(/[^a-zA-Z0-9]/, "At least one special character required")
       .required("Password is required"),
   });
 
@@ -104,109 +112,104 @@ export default function RegisterForm() {
         >
           <Form>
             <Stack spacing={2} mt={3}>
-              <Field
-                as={StyledTextFieldAuth}
-                name="name"
-                type="text"
-                variant="outlined"
-                placeholder="Enter your name"
-                fullWidth
-                required
-                sx={{
-                  borderRadius: "8px",
-                }}
-              />
-              <Field
-                as={StyledTextFieldAuth}
-                name="email"
-                type="email"
-                variant="outlined"
-                placeholder="Enter your email"
-                fullWidth
-                required
-                sx={{
-                  borderRadius: "8px",
-                }}
-              />
+              <Field name="name">
+                {({ field, meta }: any) => (
+                  <StyledTextFieldAuth
+                    {...field}
+                    type="text"
+                    placeholder="Enter your name"
+                    fullWidth
+                    error={meta.touched && Boolean(meta.error)}
+                    helperText={meta.touched && meta.error}
+                  />
+                )}
+              </Field>
 
-              <Field
-                as={StyledTextFieldAuth}
-                name="password"
-                type={showPassword ? "text" : "password"}
-                variant="outlined"
-                placeholder="Enter your password"
-                fullWidth
-                required
-                sx={{
-                  borderRadius: "8px",
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="start">
-                      <IconButton onClick={handleShowPassword}>
-                        {showPassword ? (
-                          <VisibilityIcon
-                            sx={{
-                              color: "rgba(255,255,255,0.6)",
-                              fontSize: 24,
-                            }}
-                          />
-                        ) : (
-                          <VisibilityOffIcon
-                            sx={{
-                              color: "rgba(255,255,255,0.6)",
-                              fontSize: 24,
-                            }}
-                          />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <Button
-                variant="contained"
-                type="submit"
-                sx={{
-                  mt: "4px",
-                  width: "100%",
-                  backgroundColor: "#BEDBB0",
-                  fontWeight: 500,
-                  fontSize: "14px",
-                  letterSpacing: "-0.02em",
-                  padding: "12px",
-                  borderRadius: "8px",
-                  border: "none",
-                  boxShadow: "none",
+              <Field name="email">
+                {({ field, meta }: any) => (
+                  <StyledTextFieldAuth
+                    {...field}
+                    type="email"
+                    placeholder="Enter your email"
+                    fullWidth
+                    error={meta.touched && Boolean(meta.error)}
+                    helperText={meta.touched && meta.error}
+                  />
+                )}
+              </Field>
 
-                  "&:hover": {
-                    backgroundColor: "#9DC888",
+              <Field name="password">
+                {({ field, meta }: any) => (
+                  <StyledTextFieldAuth
+                    {...field}
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    fullWidth
+                    error={meta.touched && Boolean(meta.error)}
+                    helperText={meta.touched && meta.error}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={handleShowPassword}>
+                            {showPassword ? (
+                              <VisibilityIcon />
+                            ) : (
+                              <VisibilityOffIcon />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                )}
+              </Field>
+
+              {loading ? (
+                <CircularIndeterminate />
+              ) : (
+                <Button
+                  variant="contained"
+                  type="submit"
+                  sx={{
+                    mt: "4px",
+                    width: "100%",
+                    backgroundColor: "#BEDBB0",
+                    fontWeight: 500,
+                    fontSize: "14px",
+                    letterSpacing: "-0.02em",
+                    padding: "12px",
+                    borderRadius: "8px",
+                    border: "none",
                     boxShadow: "none",
-                  },
 
-                  "&:active": {
-                    boxShadow: "none",
-                    outline: "none",
-                  },
+                    "&:hover": {
+                      backgroundColor: "#9DC888",
+                      boxShadow: "none",
+                    },
 
-                  "&:focus": {
-                    outline: "none",
-                  },
+                    "&:active": {
+                      boxShadow: "none",
+                      outline: "none",
+                    },
 
-                  "&:focus-visible": {
-                    outline: "none",
-                    boxShadow: "none",
-                  },
+                    "&:focus": {
+                      outline: "none",
+                    },
 
-                  /* 🔥 ASIL OLAY BURASI */
-                  "&.Mui-focusVisible": {
-                    outline: "none",
-                    boxShadow: "none",
-                  },
-                }}
-              >
-                Register Now
-              </Button>
+                    "&:focus-visible": {
+                      outline: "none",
+                      boxShadow: "none",
+                    },
+
+                    "&.Mui-focusVisible": {
+                      outline: "none",
+                      boxShadow: "none",
+                    },
+                  }}
+                >
+                  Register Now
+                </Button>
+              )}
             </Stack>
           </Form>
         </Formik>

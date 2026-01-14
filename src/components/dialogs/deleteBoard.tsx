@@ -8,12 +8,16 @@ import {
   useTheme,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { deleteBoardApi } from "../../api/dashboard";
+import { useState } from "react";
+import CircularIndeterminate from "../loading";
 
 interface DeleteBoardDialogProps {
   open: boolean;
   onClose: () => void;
   boardTitle?: string;
-  boardId?: string;
+  boardId: string;
+  onReset: () => void;
 }
 
 export default function DeleteBoardDialog({
@@ -21,12 +25,27 @@ export default function DeleteBoardDialog({
   onClose,
   boardId,
   boardTitle,
+  onReset,
 }: DeleteBoardDialogProps) {
   const theme = useTheme();
 
-  const handleDelete = () => {
-    console.log(`${boardId} deleted`);
-    onClose();
+  /* --------------------------------- states --------------------------------- */
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+      const res = await deleteBoardApi(boardId);
+      if (res.status === 200) {
+        setLoading(false);
+      }
+    } catch (err) {
+      setLoading(false);
+      console.log(err);
+    } finally {
+      onReset();
+      onClose();
+    }
   };
 
   return (
@@ -35,6 +54,9 @@ export default function DeleteBoardDialog({
       onClose={onClose}
       maxWidth="xs"
       fullWidth
+      disableRestoreFocus
+      disableEnforceFocus
+      disableAutoFocus
       PaperProps={{
         sx: {
           borderRadius: "8px",
@@ -72,10 +94,13 @@ export default function DeleteBoardDialog({
           <Button onClick={onClose} variant="outlined">
             Cancel
           </Button>
-
-          <Button onClick={handleDelete} variant="contained" color="error">
-            Delete
-          </Button>
+          {loading ? (
+            <CircularIndeterminate />
+          ) : (
+            <Button onClick={handleDelete} variant="contained" color="error">
+              Delete
+            </Button>
+          )}
         </Stack>
       </Box>
     </Dialog>

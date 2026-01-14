@@ -10,6 +10,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import * as Yup from "yup";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import CloseIcon from "@mui/icons-material/Close";
@@ -20,24 +21,30 @@ import FormikDatePicker from "../datePicker";
 import dayjs from "dayjs";
 import { StyledAddButton } from "../button";
 import { addCardApi, type AddCardType } from "../../api/dashboard";
+import { useState } from "react";
+import CircularIndeterminate from "../loading";
 
 interface Params {
   isOpen: boolean;
   onClose: () => void;
   boardId: string;
   columnId: string;
+  onReset: () => void;
 }
 
 export default function AddCardDialog(params: Params) {
-  const { isOpen, onClose, columnId, boardId } = params;
+  const { isOpen, onClose, columnId, boardId, onReset } = params;
+
+  /* --------------------------------- states --------------------------------- */
+  const [loading, setLoading] = useState<boolean>(false);
 
   /* -------------------------------- variables ------------------------------- */
   const theme = useTheme();
   const PRIORITIES = [
-    { value: "high", color: "#8FA1D0" },
+    { value: "high", color: "#BEDBB0" },
     { value: "medium", color: "#E09CB5" },
-    { value: "low", color: "#BEDBB0" },
-    { value: "none", color: theme.palette.text.disabled },
+    { value: "low", color: "#8FA1D0" },
+    { value: "none", color: theme.palette.icon.secondary },
   ] as const;
 
   /* --------------------------------- handler -------------------------------- */
@@ -46,15 +53,20 @@ export default function AddCardDialog(params: Params) {
     actions: FormikHelpers<AddCardType>
   ) => {
     try {
+      setLoading(true);
       const res = await addCardApi(values);
 
-      if (res?.success) {
-        console.log("sıkıntı kardeşim ya");
+      if (res.status === 201) {
+        setLoading(false);
       }
       actions.resetForm();
       onClose();
     } catch (error) {
+      setLoading(false);
       console.error(error);
+    } finally {
+      onReset();
+      onClose();
     }
   };
   /* ------------------------------- components ------------------------------- */
@@ -93,6 +105,16 @@ export default function AddCardDialog(params: Params) {
     </Box>
   );
 
+  /* ------------------------------- validation ------------------------------- */
+  const validation = Yup.object({
+    title: Yup.string()
+      .min(2, "Title is too short")
+      .required("Title is required"),
+    description: Yup.string()
+      .min(2, "Description is too short")
+      .required("Description is required"),
+  });
+
   return (
     <Dialog
       open={isOpen}
@@ -128,32 +150,43 @@ export default function AddCardDialog(params: Params) {
               priority: "",
               deadline: dayjs(),
             }}
+            validationSchema={validation}
             onSubmit={handleSubmit}
           >
             <Form>
               <Stack spacing={2} mt={3}>
-                <Field
-                  as={StyledTextField}
-                  name="title"
-                  type="text"
-                  variant="outlined"
-                  placeholder="Title"
-                  fullWidth
-                  required
-                  sx={{
-                    maxHeight: 49,
-                  }}
-                />
-                <Field
-                  as={StyledTextFieldMultiLine}
-                  name="description"
-                  multiline
-                  rows={7}
-                  variant="outlined"
-                  placeholder="Description"
-                  fullWidth
-                  required
-                />
+                <Field name="title">
+                  {({ field, meta }: any) => (
+                    <StyledTextField
+                      {...field}
+                      type="text"
+                      placeholder="Title"
+                      fullWidth
+                      sx={{
+                        maxHeight: 49,
+                      }}
+                      error={meta.touched && Boolean(meta.error)}
+                      helperText={meta.touched && meta.error}
+                    />
+                  )}
+                </Field>
+
+                <Field name="description">
+                  {({ field, meta }: any) => (
+                    <StyledTextFieldMultiLine
+                      {...field}
+                      type="text"
+                      multiline
+                      rows={7}
+                      variant="outlined"
+                      placeholder="Description"
+                      fullWidth
+                      error={meta.touched && Boolean(meta.error)}
+                      helperText={meta.touched && meta.error}
+                    />
+                  )}
+                </Field>
+
                 <Stack direction={"column"} alignItems={"start"} gap={"4px"}>
                   <FormLabel
                     sx={{
@@ -164,7 +197,7 @@ export default function AddCardDialog(params: Params) {
                   >
                     Priority
                   </FormLabel>
-                  <Field name="priority">
+                  <Field name="priority" required>
                     {({ field }: FieldProps) => (
                       <RadioGroup row {...field}>
                         {PRIORITIES.map((p) => (
@@ -201,7 +234,11 @@ export default function AddCardDialog(params: Params) {
                     <Field name="deadline" component={FormikDatePicker} />
                   </LocalizationProvider>
                 </Stack>
-                <StyledAddButton title="Add" type="submit" />
+                {loading ? (
+                  <CircularIndeterminate />
+                ) : (
+                  <StyledAddButton title="Add" type="submit" />
+                )}
               </Stack>
             </Form>
           </Formik>

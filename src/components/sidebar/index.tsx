@@ -22,9 +22,16 @@ import ListItemSkeleton from "../../lib/skeleton";
 export interface SidebarParams {
   boards: BoardWithColumns[] | null;
   onChange: (board: BoardWithColumns | null) => void;
+  onReset: () => void;
+  isEmpty: boolean;
 }
 
-export default function SideBar({ boards, onChange }: SidebarParams) {
+export default function SideBar({
+  boards,
+  onChange,
+  onReset,
+  isEmpty,
+}: SidebarParams) {
   /* --------------------------------- STATES --------------------------------- */
   const [activeBoardId, setActiveBoardId] = useState<string>("");
   const [addBoardDialog, setAddBoardDialog] = useState<boolean>(false);
@@ -106,10 +113,11 @@ export default function SideBar({ boards, onChange }: SidebarParams) {
               paddingBlock={2}
               alignItems={"center"}
               justifyContent={"space-between"}
+              minWidth={212}
             >
               <Typography
                 sx={{
-                  maxWidth: 80,
+                  maxWidth: 100,
                   fontWeight: 500,
                   fontSize: "14px",
                   letterSpacing: "-2%",
@@ -144,18 +152,20 @@ export default function SideBar({ boards, onChange }: SidebarParams) {
           </Stack>
         </Stack>
         <Stack mt={1.5} maxHeight={"60vh"} overflow={"hidden"}>
-          {boards
-            ? boards.map((board) => (
-                <SideBarListItem
-                  key={board._id}
-                  board={board}
-                  isActive={activeBoardId === board._id}
-                  onClick={() => handleSelectBoard(board)}
-                />
-              ))
-            : Array.from({ length: 3 }).map((_, i) => (
-                <ListItemSkeleton key={i} />
-              ))}
+          {!isEmpty &&
+            (boards && boards.length > 0
+              ? boards.map((board) => (
+                  <SideBarListItem
+                    key={board._id}
+                    board={board}
+                    isActive={activeBoardId === board._id}
+                    onClick={() => handleSelectBoard(board)}
+                    onReset={onReset}
+                  />
+                ))
+              : Array.from({ length: 3 }).map((_, i) => (
+                  <ListItemSkeleton key={i} />
+                )))}
         </Stack>
         <Stack mt={"auto"} p={3} spacing={2}>
           <Box
@@ -193,7 +203,7 @@ export default function SideBar({ boards, onChange }: SidebarParams) {
                 sx={{
                   fontSize: "14px",
                   fontWeight: 400,
-                  color: theme.palette.text.primary,
+                  color: theme.palette.text.sideBarText,
                 }}
               >
                 If you need help with{" "}
@@ -214,32 +224,36 @@ export default function SideBar({ boards, onChange }: SidebarParams) {
               className="helpLabel"
               direction="row"
               spacing={1}
-              alignItems="center"
-              bgcolor={theme.palette.background.paper}
+              justifyContent={"start"}
               borderRadius="8px"
               sx={{
                 "&:hover": {
+                  bgcolor: theme.palette.background.hoverBg,
                   borderRadius: "0 0 8px 8px",
                 },
               }}
             >
               <IconButton
                 sx={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "start",
                   borderRadius: "8px",
+                  gap: 1,
                 }}
                 onClick={() => {
                   setNeedHelpDialog(true);
                 }}
               >
                 <HelpOutlineIcon
-                  sx={{ fontSize: 20, color: theme.palette.text.primary }}
+                  sx={{ fontSize: 20, color: theme.palette.text.sideBarText }}
                 />
                 <Typography
                   sx={{
                     fontWeight: 500,
                     fontSize: "12px",
                     letterSpacing: "-2%",
-                    color: theme.palette.text.primary,
+                    color: theme.palette.text.sideBarText,
                   }}
                 >
                   Need help?
@@ -268,7 +282,7 @@ export default function SideBar({ boards, onChange }: SidebarParams) {
                 fontWeight: 500,
                 fontSize: "16px",
                 letterSpacing: "-2%",
-                color: theme.palette.text.primary,
+                color: theme.palette.text.sideBarText,
               }}
             >
               Log Out
@@ -277,7 +291,11 @@ export default function SideBar({ boards, onChange }: SidebarParams) {
         </Stack>
       </Box>
       <NeedHelpDialog isOpen={needHelpDialog} onClose={handleNeedDialog} />
-      <AddBoard isOpen={addBoardDialog} onClose={handleDialog} />
+      <AddBoard
+        isOpen={addBoardDialog}
+        onClose={handleDialog}
+        onReset={onReset}
+      />
       <LogOutDialog open={logOutDialog} onClose={handleLogOut} />
     </>
   );

@@ -1,4 +1,4 @@
-import { Drawer, IconButton, useTheme } from "@mui/material";
+import { Box, Drawer, IconButton, useTheme } from "@mui/material";
 import { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 
@@ -23,8 +23,8 @@ export default function DrawerSideBar({ children }: Props) {
       <IconButton onClick={toggleDrawer(true)}>
         <MenuIcon sx={{ fontSize: 24, color: theme.palette.text.primary }} />
       </IconButton>
-      <Drawer open={open} onClick={toggleDrawer(false)}>
-        {children}
+      <Drawer open={open} onClose={toggleDrawer(false)}>
+        <Box onClick={(e) => e.stopPropagation()}>{children}</Box>
       </Drawer>
     </>
   );

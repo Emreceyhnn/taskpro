@@ -15,6 +15,7 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { StyledTextFieldAuth } from "../../lib/styled";
 import { login } from "../../api/auth";
+import CircularIndeterminate from "../loading";
 
 interface LoginFormValues {
   email: string;
@@ -27,6 +28,7 @@ export default function LoginForm() {
 
   /* --------------------------------- STATES --------------------------------- */
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   /* -------------------------------- HANDLERS -------------------------------- */
   const handleSubmit = async (
@@ -34,14 +36,17 @@ export default function LoginForm() {
     actions: FormikHelpers<LoginFormValues>
   ) => {
     try {
+      setLoading(true);
       const res = await login(values);
 
-      if (res?.success) {
+      if (res.status === 200) {
+        setLoading(false);
         navigate("/dashboard");
       }
 
       actions.resetForm();
     } catch (error) {
+      setLoading(false);
       console.error(error);
     }
   };
@@ -98,15 +103,18 @@ export default function LoginForm() {
         >
           <Form>
             <Stack spacing={2} mt={3}>
-              <Field
-                as={StyledTextFieldAuth}
-                name="email"
-                type="email"
-                variant="outlined"
-                placeholder="Enter your email"
-                fullWidth
-                required
-              />
+              <Field name="email">
+                {({ field, meta }: any) => (
+                  <StyledTextFieldAuth
+                    {...field}
+                    type="email"
+                    placeholder="Enter your email"
+                    fullWidth
+                    error={meta.touched && Boolean(meta.error)}
+                    helperText={meta.touched && meta.error}
+                  />
+                )}
+              </Field>
 
               <Field
                 as={StyledTextFieldAuth}
@@ -140,43 +148,47 @@ export default function LoginForm() {
                   ),
                 }}
               />
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{
-                  mt: "4px",
-                  width: "100%",
-                  backgroundColor: "#BEDBB0",
-                  fontWeight: 500,
-                  fontSize: "14px",
-                  letterSpacing: "-0.02em",
-                  padding: "12px",
-                  borderRadius: 8,
-                  border: "none",
-                  boxShadow: "none",
-
-                  "&:hover": {
-                    backgroundColor: "#9DC888",
+              {loading ? (
+                <CircularIndeterminate />
+              ) : (
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{
+                    mt: "4px",
+                    width: "100%",
+                    backgroundColor: "#BEDBB0",
+                    fontWeight: 500,
+                    fontSize: "14px",
+                    letterSpacing: "-0.02em",
+                    padding: "12px",
+                    borderRadius: 8,
+                    border: "none",
                     boxShadow: "none",
-                  },
 
-                  "&:active": {
-                    boxShadow: "none",
-                    outline: "none",
-                  },
+                    "&:hover": {
+                      backgroundColor: "#9DC888",
+                      boxShadow: "none",
+                    },
 
-                  "&:focus": {
-                    outline: "none",
-                  },
+                    "&:active": {
+                      boxShadow: "none",
+                      outline: "none",
+                    },
 
-                  "&:focus-visible": {
-                    outline: "none",
-                    boxShadow: "none",
-                  },
-                }}
-              >
-                Log In Now
-              </Button>
+                    "&:focus": {
+                      outline: "none",
+                    },
+
+                    "&:focus-visible": {
+                      outline: "none",
+                      boxShadow: "none",
+                    },
+                  }}
+                >
+                  Log In Now
+                </Button>
+              )}
             </Stack>
           </Form>
         </Formik>

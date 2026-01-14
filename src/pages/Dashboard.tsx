@@ -6,22 +6,65 @@ import Dashboard from "../components/dashboard/main";
 import { useEffect, useState } from "react";
 import BlankPage from "../components/dashboard/blank";
 import { getAllTasks } from "../api/dashboard";
-import { mergeBoardData } from "../lib/utils";
+import { backgrounds, mergeBoardData } from "../lib/utils";
 import type { BoardWithColumns } from "../lib/utils";
 
 export default function DashboardPage() {
   /* --------------------------------- states --------------------------------- */
-  const [selectedBoard, setSelectedBoard] = useState<Partial<BoardWithColumns>>(
-    {}
+  const [selectedBoard, setSelectedBoard] = useState<BoardWithColumns | null>(
+    null
   );
   const [dashboardData, setDashboardData] = useState<BoardWithColumns[] | null>(
     null
   );
 
+  const [isEmpty, SetIsEmpty] = useState<boolean>(false);
+
   /* --------------------------------- handler -------------------------------- */
   const handleSelectBoard = (board: BoardWithColumns | null) => {
-    setSelectedBoard(board || {});
+    setSelectedBoard(board);
   };
+
+  const handleReset = async () => {
+    const res = await getAllTasks();
+    SetIsEmpty(res?.isEmpty);
+    const parsedValue =
+      mergeBoardData(res.boards, res.columns, res.tasks) ?? null;
+
+    setDashboardData(parsedValue);
+
+    if (selectedBoard && parsedValue) {
+      const updatedBoard = parsedValue.find((b) => b._id === selectedBoard._id);
+      setSelectedBoard(updatedBoard ?? null);
+    }
+  };
+
+  const handleFilterData = (item: string) => {
+    if (!dashboardData || !selectedBoard) return;
+
+    if (item === "") {
+      const originalBoard = dashboardData.find(
+        (b) => b._id === selectedBoard._id
+      );
+      setSelectedBoard(originalBoard ?? null);
+      return;
+    }
+
+    const sourceBoard = dashboardData.find((b) => b._id === selectedBoard._id);
+
+    if (!sourceBoard) return;
+
+    const filteredBoard: BoardWithColumns = {
+      ...sourceBoard,
+      columns: sourceBoard.columns.map((column) => ({
+        ...column,
+        tasks: column.tasks.filter((task) => task.priority === item),
+      })),
+    };
+
+    setSelectedBoard(filteredBoard);
+  };
+
   /* -------------------------------- variables ------------------------------- */
   const theme = useTheme();
   const isTabletView = useMediaQuery(theme.breakpoints.down("md"));
@@ -29,6 +72,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const data = async () => {
       const res = await getAllTasks();
+      SetIsEmpty(res?.isEmpty);
       const parsedValue =
         mergeBoardData(res.boards, res.columns, res.tasks) ?? null;
       setDashboardData(parsedValue);
@@ -37,21 +81,31 @@ export default function DashboardPage() {
     data();
   }, []);
 
+  const bgKey = selectedBoard?.background as keyof typeof backgrounds;
+
   return (
     <>
       <Box
-        bgcolor={theme.palette.background.dashboardBg}
         sx={{
+          background:
+            bgKey && backgrounds[bgKey]
+              ? `url(${backgrounds[bgKey].value})`
+              : "none",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
           width: "100vw",
-          height: "100vh",
-          flexDirection: "row",
+          minHeight: "100vh",
           display: "flex",
         }}
       >
         {!isTabletView && (
-          <SideBar boards={dashboardData} onChange={handleSelectBoard} />
+          <SideBar
+            boards={dashboardData}
+            onChange={handleSelectBoard}
+            onReset={handleReset}
+            isEmpty={isEmpty}
+          />
         )}
-
         <Stack
           sx={{
             display: "flex",
@@ -60,8 +114,14 @@ export default function DashboardPage() {
           }}
         >
           <Header boards={dashboardData} onChange={handleSelectBoard} />
-          {selectedBoard._id ? (
-            <Dashboard {...(selectedBoard as BoardWithColumns)} />
+          {isEmpty ? (
+            <BlankPage />
+          ) : selectedBoard ? (
+            <Dashboard
+              data={selectedBoard}
+              onReset={handleReset}
+              filter={handleFilterData}
+            />
           ) : (
             <BlankPage />
           )}

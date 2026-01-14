@@ -71,14 +71,14 @@ export const backgrounds = [
   { key: "16", value: _16 },
 ];
 
-type Board = {
+export type Board = {
   _id: string;
   title: string;
-  userId: string;
+  userId?: string;
   icon: string;
   background: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 type Column = {
@@ -125,5 +125,5 @@ export function mergeBoardData(
 }
 
 export const formatDateDayjs = (value: string) => {
-  return dayjs.utc(value).tz("Europe/Istanbul").format("DD.MM.YYYY HH:mm");
+  return dayjs.utc(value).tz("Europe/Istanbul").format("DD.MM.YYYY");
 };

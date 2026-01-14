@@ -9,6 +9,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import * as Yup from "yup";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   Field,
@@ -22,14 +23,20 @@ import { StyledTextField } from "../../lib/styled";
 import { icons, backgrounds } from "../../lib/utils";
 import { StyledAddButton } from "../button";
 import { addBoardApi, type AddBoardType } from "../../api/dashboard";
+import { useState } from "react";
+import CircularIndeterminate from "../loading";
 
 interface Params {
   isOpen: boolean;
   onClose: () => void;
+  onReset: () => void;
 }
 
 export default function AddBoard(params: Params) {
-  const { isOpen, onClose } = params;
+  const { isOpen, onClose, onReset } = params;
+
+  /* --------------------------------- states --------------------------------- */
+  const [loading, setLoading] = useState<boolean>(false);
 
   /* -------------------------------- variables ------------------------------- */
   const theme = useTheme();
@@ -39,9 +46,28 @@ export default function AddBoard(params: Params) {
     values: AddBoardType,
     actions: FormikHelpers<AddBoardType>
   ) => {
-    await addBoardApi(values);
-    actions.resetForm();
+    try {
+      setLoading(true);
+      const res = await addBoardApi(values);
+      if (res.status === 201) {
+        setLoading(false);
+      }
+      actions.resetForm();
+    } catch (err) {
+      setLoading(false);
+      console.log(err);
+    } finally {
+      onReset();
+      onClose();
+    }
   };
+
+  /* ------------------------------- validation ------------------------------- */
+  const AddBoardValidation = Yup.object({
+    title: Yup.string()
+      .min(2, "Title is too short")
+      .required("Title is required"),
+  });
 
   const Icons = (src: string) => {
     return (
@@ -104,6 +130,9 @@ export default function AddBoard(params: Params) {
       open={isOpen}
       onClose={onClose}
       fullWidth
+      disableEnforceFocus
+      disableAutoFocus
+      disableRestoreFocus
       PaperProps={{
         sx: {
           backgroundImage: "none",
@@ -125,25 +154,29 @@ export default function AddBoard(params: Params) {
           <Formik<AddBoardType>
             initialValues={{
               title: "",
-              icon: icons[0].value,
-              background: backgrounds[0].value,
+              icon: icons[0].key,
+              background: backgrounds[0].key,
             }}
+            validationSchema={AddBoardValidation}
             onSubmit={handleSubmit}
           >
             <Form>
               <Stack spacing={3} mt={3}>
-                <Field
-                  as={StyledTextField}
-                  name="title"
-                  type="text"
-                  variant="outlined"
-                  placeholder="Title"
-                  fullWidth
-                  required
-                  sx={{
-                    maxHeight: 49,
-                  }}
-                />
+                <Field name="title">
+                  {({ field, meta }: any) => (
+                    <StyledTextField
+                      {...field}
+                      type="text"
+                      placeholder="Title"
+                      fullWidth
+                      sx={{
+                        maxHeight: 49,
+                      }}
+                      error={meta.touched && Boolean(meta.error)}
+                      helperText={meta.touched && meta.error}
+                    />
+                  )}
+                </Field>
                 <Stack direction={"column"} alignItems={"start"} gap={"4px"}>
                   <FormLabel
                     sx={{
@@ -161,7 +194,7 @@ export default function AddBoard(params: Params) {
                         {icons.map((p) => (
                           <FormControlLabel
                             key={p.key}
-                            value={p.value}
+                            value={p.key}
                             sx={{ m: 0 }}
                             control={
                               <Radio
@@ -200,7 +233,7 @@ export default function AddBoard(params: Params) {
                         {backgrounds.map((p) => (
                           <FormControlLabel
                             key={p.key}
-                            value={p.value}
+                            value={p.key}
                             sx={{ m: 0 }}
                             control={
                               <Radio
@@ -217,7 +250,11 @@ export default function AddBoard(params: Params) {
                     )}
                   </Field>
                 </Stack>
-                <StyledAddButton title="Create" type="submit" />
+                {loading ? (
+                  <CircularIndeterminate />
+                ) : (
+                  <StyledAddButton title="Create" type="submit" />
+                )}
               </Stack>
             </Form>
           </Formik>

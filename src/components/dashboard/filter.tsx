@@ -11,14 +11,23 @@ import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState } from "react";
 
-export default function Filter() {
+interface Params {
+  filter: (item: string) => void;
+}
+
+export default function Filter(params: Params) {
+  /* ---------------------------------- state --------------------------------- */
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [priority, setPriority] = useState<string>("");
-
   const open = Boolean(anchorEl);
 
+  /* -------------------------------- variable -------------------------------- */
   const theme = useTheme();
 
+  const handleFilter = (item: string) => {
+    setPriority(item);
+    params.filter(item);
+  };
   return (
     <>
       {/* FILTER ICON */}
@@ -113,14 +122,14 @@ export default function Filter() {
                 cursor: "pointer",
                 color: theme.palette.text.primary,
               }}
-              onClick={() => setPriority("")}
+              onClick={() => handleFilter("")}
             >
               Show all
             </Typography>
           </Stack>
 
           {[
-            { label: "Without priority", value: "", color: "#6b6b6b" },
+            { label: "Without priority", value: "none", color: "#6b6b6b" },
             { label: "Low", value: "low", color: "#8fa1d0" },
             { label: "Medium", value: "medium", color: "#e09cb5" },
             { label: "High", value: "high", color: "#bedbb0" },
@@ -131,7 +140,7 @@ export default function Filter() {
               alignItems="center"
               spacing={1}
               sx={{ cursor: "pointer" }}
-              onClick={() => setPriority(item.value)}
+              onClick={() => handleFilter(item.value)}
             >
               <Radio
                 checked={priority === item.value}

@@ -18,30 +18,43 @@ import {
   type FormikHelpers,
 } from "formik";
 import { StyledTextField } from "../../lib/styled";
-
-import { icons, backgrounds, type BoardWithColumns } from "../../lib/utils";
+import * as Yup from "yup";
+import { icons, backgrounds, type Board } from "../../lib/utils";
 import { StyledAddButton } from "../button";
+import { editBoardApi } from "../../api/dashboard";
+import { useState } from "react";
+import CircularIndeterminate from "../loading";
 
 interface Params {
   isOpen: boolean;
   onClose: () => void;
-  board: BoardWithColumns;
+  board: Board;
+  onReset: () => void;
 }
 
-interface AddBoard {
-  title: string;
-  icon: string;
-  background: string;
-}
-
-export default function EditBoard({ isOpen, onClose, board }: Params) {
+export default function EditBoard({ isOpen, onClose, board, onReset }: Params) {
   /* -------------------------------- variables ------------------------------- */
   const theme = useTheme();
 
+  /* --------------------------------- states --------------------------------- */
+  const [loading, setLoading] = useState<boolean>(false);
+
   /* --------------------------------- handler -------------------------------- */
-  const handleSubmit = (values: AddBoard, actions: FormikHelpers<AddBoard>) => {
-    console.log(values);
-    actions.resetForm();
+  const handleSubmit = async (values: Board, actions: FormikHelpers<Board>) => {
+    try {
+      setLoading(true);
+      const res = await editBoardApi(values);
+      if (res.status === 200) {
+        setLoading(false);
+      }
+      actions.resetForm();
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    } finally {
+      onReset();
+      onClose();
+    }
   };
 
   const Icons = (src: string) => {
@@ -100,11 +113,21 @@ export default function EditBoard({ isOpen, onClose, board }: Params) {
     );
   };
 
+  /* ------------------------------- validation ------------------------------- */
+  const validation = Yup.object({
+    title: Yup.string()
+      .min(2, "Title is too short")
+      .required("Title is required"),
+  });
+
   return (
     <Dialog
       open={isOpen}
       onClose={onClose}
       fullWidth
+      disableEnforceFocus
+      disableAutoFocus
+      disableRestoreFocus
       PaperProps={{
         sx: {
           backgroundImage: "none",
@@ -123,28 +146,33 @@ export default function EditBoard({ isOpen, onClose, board }: Params) {
       <Stack p={3} direction={"column"} spacing={1}>
         <Typography>New Board</Typography>
         <Stack>
-          <Formik<AddBoard>
+          <Formik<Board>
             initialValues={{
+              _id: board._id,
               title: board.title,
               icon: board.icon,
               background: board.background,
             }}
+            validationSchema={validation}
             onSubmit={handleSubmit}
           >
             <Form>
               <Stack spacing={3} mt={3}>
-                <Field
-                  as={StyledTextField}
-                  name="title"
-                  type="text"
-                  variant="outlined"
-                  placeholder="Title"
-                  fullWidth
-                  required
-                  sx={{
-                    maxHeight: 49,
-                  }}
-                />
+                <Field name="title">
+                  {({ field, meta }: any) => (
+                    <StyledTextField
+                      {...field}
+                      type="text"
+                      placeholder="Title"
+                      fullWidth
+                      sx={{
+                        maxHeight: 49,
+                      }}
+                      error={meta.touched && Boolean(meta.error)}
+                      helperText={meta.touched && meta.error}
+                    />
+                  )}
+                </Field>
                 <Stack direction={"column"} alignItems={"start"} gap={"4px"}>
                   <FormLabel
                     sx={{
@@ -162,7 +190,7 @@ export default function EditBoard({ isOpen, onClose, board }: Params) {
                         {icons.map((p) => (
                           <FormControlLabel
                             key={p.key}
-                            value={p.value}
+                            value={p.key}
                             sx={{ m: 0 }}
                             control={
                               <Radio
@@ -201,7 +229,7 @@ export default function EditBoard({ isOpen, onClose, board }: Params) {
                         {backgrounds.map((p) => (
                           <FormControlLabel
                             key={p.key}
-                            value={p.value}
+                            value={p.key}
                             sx={{ m: 0 }}
                             control={
                               <Radio
@@ -218,8 +246,11 @@ export default function EditBoard({ isOpen, onClose, board }: Params) {
                     )}
                   </Field>
                 </Stack>
-
-                <StyledAddButton title="Edit" />
+                {loading ? (
+                  <CircularIndeterminate />
+                ) : (
+                  <StyledAddButton title="Edit" type="submit" />
+                )}
               </Stack>
             </Form>
           </Formik>

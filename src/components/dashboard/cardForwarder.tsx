@@ -1,23 +1,27 @@
 import { IconButton, Menu, Stack, Typography, useTheme } from "@mui/material";
-import { arrowCircle } from "../../lib/utils";
 import { useState } from "react";
+import { arrowCircle } from "../../lib/utils";
 
 interface MoveMenuProps {
+  alreadyInColumn: string;
   columns: { id: string; title: string }[];
   onMove: (columnId: string) => void;
-  renderTrigger: (openMenu: (el: HTMLElement) => void) => React.ReactNode;
 }
 
-export default function MoveMenu({ columns, onMove }: MoveMenuProps) {
+export default function MoveMenu({
+  alreadyInColumn,
+  columns,
+  onMove,
+}: MoveMenuProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
   const open = Boolean(anchorEl);
-
   const theme = useTheme();
+
+  const handleClose = () => setAnchorEl(null);
 
   return (
     <>
-      {/* TRIGGER ICON */}
+      {/* TRIGGER */}
       <IconButton size="small" onClick={(e) => setAnchorEl(e.currentTarget)}>
         <svg
           width={18}
@@ -36,69 +40,72 @@ export default function MoveMenu({ columns, onMove }: MoveMenuProps) {
       <Menu
         anchorEl={anchorEl}
         open={open}
-        onClose={() => setAnchorEl(null)}
+        onClose={handleClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
         PaperProps={{
           sx: {
             minWidth: 220,
             borderRadius: "12px",
-            background: theme.palette.background.paper,
-            color: "#fff",
+            backgroundColor: theme.palette.background.paper,
             p: 1,
           },
         }}
       >
-        {columns.map((col) => (
-          <Stack
-            key={col.id}
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-            px={2}
-            py={1.2}
-            sx={{
-              cursor: "pointer",
-              borderRadius: "8px",
-              "&:hover": {
-                backgroundColor: "rgba(255,255,255,0.06)",
-              },
-            }}
-            onClick={() => {
-              onMove(col.id);
-              setAnchorEl(null);
-            }}
-          >
-            <Typography
+        {columns.map((col) => {
+          const isActive = col.id === alreadyInColumn;
+
+          return (
+            <Stack
+              key={col.id}
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              px={2}
+              py={1.2}
               sx={{
-                fontSize: 14,
-                color:
-                  col.title === "In progress"
-                    ? theme.palette.text.greenText
-                    : theme.palette.text.primary,
+                borderRadius: "8px",
+                cursor: isActive ? "default" : "pointer",
+                opacity: isActive ? 0.6 : 1,
+                "&:hover": {
+                  backgroundColor: isActive
+                    ? "transparent"
+                    : "rgba(255,255,255,0.06)",
+                },
+              }}
+              onClick={() => {
+                if (isActive) return;
+                onMove(col.id);
+                handleClose();
               }}
             >
-              {col.title}
-            </Typography>
-
-            <IconButton
-              size="small"
-              onClick={(e) => setAnchorEl(e.currentTarget)}
-            >
-              <svg
-                width={18}
-                height={18}
-                style={
-                  {
-                    "--color1": theme.palette.icon.secondary,
-                  } as React.CSSProperties
-                }
+              <Typography
+                sx={{
+                  fontSize: 14,
+                  color: isActive
+                    ? theme.palette.icon.primary
+                    : theme.palette.text.primary,
+                }}
               >
-                <use href={arrowCircle} />
-              </svg>
-            </IconButton>
-          </Stack>
-        ))}
+                {col.title}
+              </Typography>
+
+              {!isActive && (
+                <svg
+                  width={18}
+                  height={18}
+                  style={
+                    {
+                      "--color1": theme.palette.icon.secondary,
+                    } as React.CSSProperties
+                  }
+                >
+                  <use href={arrowCircle} />
+                </svg>
+              )}
+            </Stack>
+          );
+        })}
       </Menu>
     </>
   );

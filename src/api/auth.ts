@@ -16,6 +16,11 @@ export const register = async (data: {
   return res.data.message;
 };
 
+export const updateUser = async (data: CurrentUserProfileType) => {
+  const res = await api.patch("/auth", data);
+  return res.data;
+};
+
 export const getGoogleOAuthUrl = async () => {
   const res = await api.get("/auth/get-oauth-url");
   console.log(res);
@@ -37,3 +42,26 @@ export const currentUser = async () => {
   const res = await api.get("/auth/current");
   return res.data;
 };
+
+export const refreshToken = async () => {
+  const res = await api.post("/auth/refresh-token");
+
+  const accessToken = res.data?.data.accessToken;
+
+  if (!accessToken) {
+    throw new Error("No access token");
+  }
+
+  setAccessToken(accessToken);
+  return accessToken;
+};
+
+export interface CurrentUserProfileType {
+  email?: string;
+  name?: string;
+  password?: string;
+  photo?: string | null;
+  createdAt?: string;
+  theme?: string;
+  profilePhotoFile?: File | null;
+}

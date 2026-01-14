@@ -16,7 +16,7 @@ export const palettes = {
       paper: "#121212",
       sidebar: "#121212",
       header: "#161616",
-      hoverBg: "rgba(255, 255, 255, 0.1)",
+      hoverBg: "rgba(31, 31, 31, 1)",
     },
 
     text: {
@@ -71,7 +71,7 @@ export const palettes = {
       paper: "#e4e4e4",
       sidebar: "#FFFFFF",
       header: "#FCFCFC",
-      hoverBg: "rgba(255, 255, 255, 0.1)",
+      hoverBg: "rgba(177, 177, 177, 0.99)",
     },
 
     text: {
@@ -127,7 +127,7 @@ export const palettes = {
       paper: "#FFFFFF",
       sidebar: "#5255BC",
       header: "#FFFFFF",
-      hoverBg: "rgba(255, 255, 255, 0.1)",
+      hoverBg: "rgba(236, 237, 253, 0.4)",
     },
 
     text: {

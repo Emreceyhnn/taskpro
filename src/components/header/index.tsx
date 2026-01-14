@@ -8,13 +8,20 @@ import {
   useTheme,
   useMediaQuery,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import avatar from "../../assets/desktop/1.png";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useThemeMode } from "../../lib/ThemeContext";
 import SideBar from "../sidebar";
 import DrawerSideBar from "../sidebar/drawer";
 import type { BoardWithColumns } from "../../lib/utils";
+import EditProfileDialog from "../dialogs/editProfile";
+import {
+  currentUser,
+  updateUser,
+  type CurrentUserProfileType,
+} from "../../api/auth";
+import type { ThemeMode } from "../../lib/theme";
 
 const themes = ["dark", "light", "violet"] as const;
 
@@ -30,8 +37,10 @@ export default function Header(params: HeaderParams) {
 
   /* --------------------------------- STATES --------------------------------- */
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const { mode, setMode } = useThemeMode();
   const open = Boolean(anchorEl);
+  const [userData, SetUserData] = useState<CurrentUserProfileType | null>(null);
 
   /* -------------------------------- HANDLERS -------------------------------- */
   const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -41,6 +50,36 @@ export default function Header(params: HeaderParams) {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const handleResetData = async () => {
+    const data = await currentUser();
+    setMode(data.data.theme);
+    SetUserData(data.data);
+  };
+
+  const handleChangeThemeMode = async (value: string) => {
+    if (!["light", "dark", "violet"].includes(value)) return;
+
+    const theme = value as ThemeMode;
+
+    await updateUser({ theme });
+    setMode(theme);
+  };
+
+  /* -------------------------------- LIFECYCLE ------------------------------- */
+  useEffect(() => {
+    const getData = async () => {
+      const data = await currentUser();
+      setMode(data.data.theme);
+      SetUserData(data.data);
+    };
+
+    getData();
+  }, []);
 
   return (
     <Box
@@ -92,7 +131,7 @@ export default function Header(params: HeaderParams) {
           {themes.map((item) => (
             <MenuItem
               key={item}
-              onClick={() => setMode(item)}
+              onClick={() => handleChangeThemeMode(item)}
               sx={{
                 "&:hover": {
                   backgroundColor: "none",
@@ -111,24 +150,39 @@ export default function Header(params: HeaderParams) {
 
         {/* USER */}
         <Typography
+          component={Button}
+          onClick={() => {
+            setDialogOpen(true);
+          }}
           sx={{
             fontWeight: 500,
             fontSize: "14px",
             color: theme.palette.text.primary,
           }}
         >
-          Emre Ceyhan
+          {userData?.name}
         </Typography>
 
         <Box
           component="img"
-          src={avatar}
+          src={userData?.photo || avatar}
+          onClick={() => {
+            setDialogOpen(true);
+          }}
           alt="avatar"
           width={32}
           height={32}
           sx={{ borderRadius: "8px" }}
         />
       </Stack>
+      {userData && (
+        <EditProfileDialog
+          isOpen={dialogOpen}
+          onClose={handleDialogClose}
+          userData={userData}
+          onReset={handleResetData}
+        />
+      )}
     </Box>
   );
 }

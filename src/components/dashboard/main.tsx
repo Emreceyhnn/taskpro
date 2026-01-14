@@ -7,9 +7,16 @@ import { StyledAddButtonVariant } from "../button";
 import Filter from "./filter";
 import type { BoardWithColumns } from "../../lib/utils";
 
-export default function Dashboard(params: BoardWithColumns) {
+interface Params {
+  data: BoardWithColumns;
+  onReset: () => void;
+  filter: (item: string) => void;
+}
+
+export default function Dashboard({ data, onReset, filter }: Params) {
   /* --------------------------------- PARAMS --------------------------------- */
-  const { columns = [], title, _id } = params;
+
+  const { columns = [], title, _id } = data ?? {};
 
   /* --------------------------------- STATES --------------------------------- */
   const [isAddDialogOpen, setAddDialogOpen] = useState<boolean>(false);
@@ -46,7 +53,7 @@ export default function Dashboard(params: BoardWithColumns) {
           >
             {title}
           </Typography>
-          <Filter />
+          <Filter filter={filter} />
         </Stack>
 
         <Box width={"100%"}>
@@ -58,7 +65,12 @@ export default function Dashboard(params: BoardWithColumns) {
               width="100%"
             >
               {columns.map((i) => (
-                <Column key={i._id} columnNames={columnsName} columns={i} />
+                <Column
+                  key={i._id}
+                  columnNames={columnsName}
+                  columns={i}
+                  onReset={onReset}
+                />
               ))}
               <StyledAddButtonVariant
                 title="Add another column"
@@ -84,6 +96,7 @@ export default function Dashboard(params: BoardWithColumns) {
         isOpen={isAddDialogOpen}
         onClose={dialogHandler}
         boardId={_id}
+        onReset={onReset}
       />
     </>
   );

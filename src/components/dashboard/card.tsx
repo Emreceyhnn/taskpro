@@ -10,20 +10,23 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import { PRIORITIES, type ColumnNames } from "../../lib/types";
-import { arrowCircle, formatDateDayjs, type Task } from "../../lib/utils";
+import { formatDateDayjs } from "../../lib/utils";
 import { useState } from "react";
 import EditCardDialog from "../dialogs/editCard";
 import DeleteCardDialog from "../dialogs/deleteCard";
 import MoveMenu from "./cardForwarder";
+import { cardForwarder, type EditCardType } from "../../api/dashboard";
+import dayjs from "dayjs";
 
 interface TaskSectionType {
-  tasks: Task;
+  tasks: EditCardType;
   columnNames: ColumnNames[];
+  onReset: () => void;
 }
 
 export default function Card(params: TaskSectionType) {
   /* --------------------------------- params --------------------------------- */
-  const { columnNames, tasks } = params;
+  const { columnNames, tasks, onReset } = params;
 
   /* -------------------------------- variables ------------------------------- */
   const theme = useTheme();
@@ -41,7 +44,22 @@ export default function Card(params: TaskSectionType) {
     setDeleteDialog(false);
   };
 
-  const isClose = true;
+  const handlerForwarder = (movedColumn: string) => {
+    cardForwarder({
+      _id: tasks._id,
+      columnId: movedColumn,
+    });
+    onReset();
+  };
+
+  const isToday = (date?: string | Date) => {
+    if (!date) return false;
+    return dayjs(date).isSame(dayjs(), "day");
+  };
+
+  const deadlineToday = isToday(tasks.deadline);
+
+  const isClose = deadlineToday;
 
   return (
     <>
@@ -130,6 +148,7 @@ export default function Card(params: TaskSectionType) {
                       fontWeight: 400,
                       fontSize: "10px",
                       color: theme.palette.text.primary,
+                      textTransform: "capitalize",
                     }}
                   >
                     {tasks.priority}
@@ -155,7 +174,9 @@ export default function Card(params: TaskSectionType) {
                       color: theme.palette.text.primary,
                     }}
                   >
-                    {formatDateDayjs(tasks.deadline.toString())}
+                    {tasks.deadline
+                      ? formatDateDayjs(tasks.deadline.toString())
+                      : "N/A"}
                   </Typography>
                 </Stack>
               </Stack>
@@ -168,30 +189,18 @@ export default function Card(params: TaskSectionType) {
               )}
 
               <MoveMenu
+                alreadyInColumn={tasks.columnId ?? ""}
                 columns={columnNames}
                 onMove={(columnId) => {
-                  console.log("Moved to column:", columnId);
+                  handlerForwarder(columnId);
                 }}
-                renderTrigger={(openMenu) => (
-                  <IconButton
-                    sx={{ padding: 0, margin: 0 }}
-                    onClick={(e) => openMenu(e.currentTarget)}
-                  >
-                    <svg
-                      width={18}
-                      height={18}
-                      style={
-                        {
-                          "--color1": theme.palette.icon.secondary,
-                        } as React.CSSProperties
-                      }
-                    >
-                      <use href={arrowCircle} />
-                    </svg>
-                  </IconButton>
-                )}
               />
-              <IconButton sx={{ padding: 0, margin: 0 }}>
+              <IconButton
+                sx={{ padding: 0, margin: 0 }}
+                onClick={() => {
+                  setEditDialog(true);
+                }}
+              >
                 <EditIcon
                   sx={{ fontSize: 16, color: theme.palette.icon.secondary }}
                 />
@@ -221,11 +230,18 @@ export default function Card(params: TaskSectionType) {
           }}
         />
       </Box>
+      <EditCardDialog
+        isOpen={isEditDialog}
+        onClose={editHandler}
+        task={tasks}
+        onReset={onReset}
+      />
       <DeleteCardDialog
         open={isDeleteDialog}
         onClose={deleteHandler}
         cardId={tasks._id}
         cardTitle={tasks.title}
+        onReset={onReset}
       />
     </>
   );

@@ -6,6 +6,10 @@ import {
   StyledTextField,
   StyledTextFieldMultiLine,
 } from "../../lib/styled";
+import * as Yup from "yup";
+import { useState } from "react";
+import { needHelpApi } from "../../api/dashboard";
+import CircularIndeterminate from "../loading";
 
 /* ---------------------------------- TYPES --------------------------------- */
 interface Params {
@@ -24,14 +28,36 @@ export default function NeedHelpDialog(params: Params) {
   /* -------------------------------- variables ------------------------------- */
   const theme = useTheme();
 
+  /* --------------------------------- states --------------------------------- */
+  const [loading, setLoading] = useState<boolean>(false);
+
   /* --------------------------------- handler -------------------------------- */
-  const handleSubmit = (
+  const handleSubmit = async (
     values: NeedHelpValues,
     actions: FormikHelpers<NeedHelpValues>
   ) => {
-    console.log(values);
-    actions.resetForm();
+    try {
+      setLoading(true);
+      const res = await needHelpApi(values);
+      if (res.status === 200) {
+        setLoading(false);
+      }
+      actions.resetForm();
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    } finally {
+      onClose();
+    }
   };
+
+  /* ------------------------------- validation ------------------------------- */
+  const validation = Yup.object({
+    email: Yup.string().email("Invalid email").required("Email is required"),
+    comment: Yup.string()
+      .min(2, "Comment is too short")
+      .required("Comment is required"),
+  });
 
   return (
     <Dialog
@@ -61,30 +87,43 @@ export default function NeedHelpDialog(params: Params) {
               email: "",
               comment: "",
             }}
+            validationSchema={validation}
             onSubmit={handleSubmit}
           >
             <Form>
               <Stack spacing={2} mt={3}>
-                <Field
-                  as={StyledTextField}
-                  name="email"
-                  type="email"
-                  variant="outlined"
-                  placeholder="Enter your email"
-                  fullWidth
-                  required
-                />
-                <Field
-                  as={StyledTextFieldMultiLine}
-                  name="comment"
-                  multiline
-                  rows={3}
-                  variant="outlined"
-                  placeholder="Enter your comment"
-                  fullWidth
-                  required
-                />
-                <StyledButton>Send</StyledButton>
+                <Field name="email">
+                  {({ field, meta }: any) => (
+                    <StyledTextField
+                      {...field}
+                      type="email"
+                      placeholder="Enter your email"
+                      fullWidth
+                      error={meta.touched && Boolean(meta.error)}
+                      helperText={meta.touched && meta.error}
+                    />
+                  )}
+                </Field>
+                <Field name="comment">
+                  {({ field, meta }: any) => (
+                    <StyledTextFieldMultiLine
+                      {...field}
+                      type="text"
+                      multiline
+                      rows={3}
+                      variant="outlined"
+                      placeholder="Comment"
+                      fullWidth
+                      error={meta.touched && Boolean(meta.error)}
+                      helperText={meta.touched && meta.error}
+                    />
+                  )}
+                </Field>
+                {loading ? (
+                  <CircularIndeterminate />
+                ) : (
+                  <StyledButton>Send</StyledButton>
+                )}
               </Stack>
             </Form>
           </Formik>

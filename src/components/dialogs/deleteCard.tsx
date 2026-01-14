@@ -8,12 +8,16 @@ import {
   useTheme,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { deleteCardApi } from "../../api/dashboard";
+import { useState } from "react";
+import CircularIndeterminate from "../loading";
 
 interface DeleteBoardDialogProps {
   open: boolean;
   onClose: () => void;
   cardTitle?: string;
-  cardId?: string;
+  cardId: string;
+  onReset: () => void;
 }
 
 export default function DeleteCardDialog({
@@ -21,12 +25,27 @@ export default function DeleteCardDialog({
   onClose,
   cardId,
   cardTitle,
+  onReset,
 }: DeleteBoardDialogProps) {
   const theme = useTheme();
 
-  const handleDelete = () => {
-    console.log(`${cardId} deleted`);
-    onClose();
+  /* --------------------------------- states --------------------------------- */
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+      const res = await deleteCardApi(cardId);
+      if (res.status === 200) {
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    } finally {
+      onReset();
+      onClose();
+    }
   };
 
   return (
@@ -72,10 +91,13 @@ export default function DeleteCardDialog({
           <Button onClick={onClose} variant="outlined">
             Cancel
           </Button>
-
-          <Button onClick={handleDelete} variant="contained" color="error">
-            Delete
-          </Button>
+          {loading ? (
+            <CircularIndeterminate />
+          ) : (
+            <Button onClick={handleDelete} variant="contained" color="error">
+              Delete
+            </Button>
+          )}
         </Stack>
       </Box>
     </Dialog>

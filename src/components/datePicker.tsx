@@ -1,7 +1,9 @@
 import type { FieldProps } from "formik";
 import { DatePicker as MuiDatePicker } from "@mui/x-date-pickers/DatePicker";
+import { useTheme } from "@mui/material";
 
 const FormikDatePicker = ({ field, form, ...props }: FieldProps) => {
+  const theme = useTheme();
   return (
     <MuiDatePicker
       {...props}
@@ -14,6 +16,11 @@ const FormikDatePicker = ({ field, form, ...props }: FieldProps) => {
           fullWidth: false,
           InputProps: {
             disableUnderline: true,
+          },
+        },
+        openPickerIcon: {
+          sx: {
+            color: theme.palette.primary.main,
           },
         },
       }}

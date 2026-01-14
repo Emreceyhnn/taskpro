@@ -2,7 +2,7 @@ export const PRIORITIES = {
   high: "#8FA1D0",
   medium: "#E09CB5",
   low: "#BEDBB0",
-  none: "rgba(255,255,255,0.5)",
+  none: "rgb(121, 121, 121)",
 } as const;
 
 type Priority = keyof typeof PRIORITIES;

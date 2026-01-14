@@ -13,11 +13,12 @@ import type { ColumnNames } from "../../lib/types";
 interface ColumnsSectionsType {
   columns: ColumnWithTask;
   columnNames: ColumnNames[];
+  onReset: () => void;
 }
 
 export default function Column(params: ColumnsSectionsType) {
   /* --------------------------------- params --------------------------------- */
-  const { columns, columnNames } = params;
+  const { columns, columnNames, onReset } = params;
 
   /* --------------------------------- STATES --------------------------------- */
   const [isEditDialog, setEditDialog] = useState<boolean>(false);
@@ -105,7 +106,12 @@ export default function Column(params: ColumnsSectionsType) {
             sx={{ overflowY: "auto", overflowX: "hidden" }}
           >
             {columns.tasks.map((i) => (
-              <Card key={i._id} tasks={i} columnNames={columnNames} />
+              <Card
+                key={i._id}
+                tasks={i}
+                columnNames={columnNames}
+                onReset={onReset}
+              />
             ))}
           </Stack>
         </Stack>
@@ -123,13 +129,15 @@ export default function Column(params: ColumnsSectionsType) {
         onClose={addCardHandler}
         columnId={columns._id}
         boardId={columns.boardId}
+        onReset={onReset}
       />
 
       <EditColumnDialog
         isOpen={isEditDialog}
         onClose={editHandler}
         columnId={columns._id}
-        title={columns.name}
+        name={columns.name}
+        onReset={onReset}
       />
 
       <DeleteColumnDialog
@@ -137,6 +145,7 @@ export default function Column(params: ColumnsSectionsType) {
         onClose={deleteHandler}
         columnId={columns._id}
         columnTitle={columns.name}
+        onReset={onReset}
       />
     </>
   );

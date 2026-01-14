@@ -61,6 +61,7 @@ export const StyledAddButtonVariant = (props: ButtonProps) => {
     <Button
       {...props}
       sx={{
+        minWidth: 200,
         height: 56,
         paddingInline: 8,
         borderRadius: "8px",
@@ -76,6 +77,7 @@ export const StyledAddButtonVariant = (props: ButtonProps) => {
           width: 28,
           height: 28,
           display: "flex",
+          flexShrink: 0,
           alignItems: "center",
           justifyContent: "center",
           bgcolor: theme.palette.buttonSecondary.iconBg,
@@ -94,6 +96,7 @@ export const StyledAddButtonVariant = (props: ButtonProps) => {
           fontSize: 14,
           letterSpacing: "-2%",
           color: theme.palette.buttonSecondary.primaryText,
+          textWrap: "nowrap",
         }}
       >
         {props.title}

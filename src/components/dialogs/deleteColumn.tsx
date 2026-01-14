@@ -8,12 +8,16 @@ import {
   useTheme,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { deleteColumnApi } from "../../api/dashboard";
+import { useState } from "react";
+import CircularIndeterminate from "../loading";
 
 interface DeleteBoardDialogProps {
   open: boolean;
   onClose: () => void;
   columnTitle?: string;
-  columnId?: string;
+  columnId: string;
+  onReset: () => void;
 }
 
 export default function DeleteColumnDialog({
@@ -21,12 +25,27 @@ export default function DeleteColumnDialog({
   onClose,
   columnTitle,
   columnId,
+  onReset,
 }: DeleteBoardDialogProps) {
   const theme = useTheme();
 
-  const handleDelete = () => {
-    console.log(`${columnId} deleted`);
-    onClose();
+  /* --------------------------------- states --------------------------------- */
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+      const res = await deleteColumnApi(columnId);
+      if (res.status === 200) {
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    } finally {
+      onReset();
+      onClose();
+    }
   };
 
   return (
@@ -73,9 +92,13 @@ export default function DeleteColumnDialog({
             Cancel
           </Button>
 
-          <Button onClick={handleDelete} variant="contained" color="error">
-            Delete
-          </Button>
+          {loading ? (
+            <CircularIndeterminate />
+          ) : (
+            <Button onClick={handleDelete} variant="contained" color="error">
+              Delete
+            </Button>
+          )}
         </Stack>
       </Box>
     </Dialog>
