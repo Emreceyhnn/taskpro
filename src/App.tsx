@@ -12,6 +12,7 @@ import RegisterPage from "./pages/auth/Register";
 import DashboardPage from "./pages/Dashboard";
 import { ThemeContext } from "./lib/ThemeContext";
 import { startAuthMiddleware, stopAuthMiddleware } from "./api/authMiddleWare";
+import NotFound from "./pages/NotFound";
 
 function App() {
   const [mode, setMode] = useState<ThemeMode>("dark");
@@ -29,7 +30,7 @@ function App() {
         <CssBaseline />
         <Routes>
           <Route path="/" element={<LandingPage />} />
-
+          <Route path="*" element={<NotFound />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/oauth/google" element={<GoogleCallback />} />
           <Route path="/auth/sign-in" element={<LoginPage />} />
