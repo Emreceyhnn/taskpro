@@ -1,9 +1,8 @@
 import axios from "axios";
 import { getAccessToken } from "../lib/token";
-const BACKEND_ENDPOINT = import.meta.env.BACKEND_ENDPOINT;
 
 export const api = axios.create({
-  baseURL: BACKEND_ENDPOINT,
+  baseURL: "https://taskpro-backend-57d3.onrender.com",
   withCredentials: true,
 });
 
