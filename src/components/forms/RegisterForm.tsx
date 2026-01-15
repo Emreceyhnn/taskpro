@@ -38,13 +38,10 @@ export default function RegisterForm() {
   ) => {
     try {
       setLoading(true);
-      const res = await register(values);
-      if (res.success) {
-        setLoading(false);
-        navigate("/auth/sign-in");
-      }
+      await register(values);
 
       actions.resetForm();
+      navigate("/auth/sign-in");
     } catch (error) {
       console.error(error);
       setLoading(false);
