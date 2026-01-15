@@ -121,38 +121,31 @@ export default function LoginForm() {
                 )}
               </Field>
 
-              <Field
-                as={StyledTextFieldAuth}
-                name="password"
-                type={showPassword ? "text" : "password"}
-                variant="outlined"
-                placeholder="Enter your password"
-                fullWidth
-                required
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="start">
-                      <IconButton onClick={handleShowPassword}>
-                        {showPassword ? (
-                          <VisibilityIcon
-                            sx={{
-                              color: "rgba(255,255,255,0.6)",
-                              fontSize: 24,
-                            }}
-                          />
-                        ) : (
-                          <VisibilityOffIcon
-                            sx={{
-                              color: "rgba(255,255,255,0.6)",
-                              fontSize: 24,
-                            }}
-                          />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
+              <Field name="password">
+                {({ field, meta }: any) => (
+                  <StyledTextFieldAuth
+                    {...field}
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    fullWidth
+                    error={meta.touched && Boolean(meta.error)}
+                    helperText={meta.touched && meta.error}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={handleShowPassword}>
+                            {showPassword ? (
+                              <VisibilityIcon />
+                            ) : (
+                              <VisibilityOffIcon />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                )}
+              </Field>
               {loading ? (
                 <CircularIndeterminate />
               ) : (
