@@ -53,22 +53,22 @@ export const icons: IconType[] = [
 export const arrowCircle = iconArrow;
 
 export const backgrounds = [
-  { key: "1", value: _1 },
-  { key: "2", value: _2 },
-  { key: "3", value: _3 },
-  { key: "4", value: _4 },
-  { key: "5", value: _5 },
-  { key: "6", value: _6 },
-  { key: "7", value: _7 },
-  { key: "8", value: _8 },
-  { key: "9", value: _9 },
-  { key: "10", value: _10 },
-  { key: "11", value: _11 },
-  { key: "12", value: _12 },
-  { key: "13", value: _13 },
-  { key: "14", value: _14 },
-  { key: "15", value: _15 },
-  { key: "16", value: _16 },
+  { key: "0", value: _1 },
+  { key: "1", value: _2 },
+  { key: "2", value: _3 },
+  { key: "3", value: _4 },
+  { key: "4", value: _5 },
+  { key: "5", value: _6 },
+  { key: "6", value: _7 },
+  { key: "7", value: _8 },
+  { key: "8", value: _9 },
+  { key: "9", value: _10 },
+  { key: "10", value: _11 },
+  { key: "11", value: _12 },
+  { key: "12", value: _13 },
+  { key: "13", value: _14 },
+  { key: "14", value: _15 },
+  { key: "15", value: _16 },
 ];
 
 export type Board = {
