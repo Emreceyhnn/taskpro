@@ -96,7 +96,7 @@ export default function DashboardPage() {
               : "none",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          minWidth: "100dvw",
+          width: "100dvw",
           minHeight: "100dvh",
           display: "flex",
         }}
@@ -114,6 +114,7 @@ export default function DashboardPage() {
             display: "flex",
             flexDirection: "column",
             width: "100%",
+            overflow: "hidden",
           }}
         >
           <Header
