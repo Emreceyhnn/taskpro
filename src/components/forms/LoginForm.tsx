@@ -44,6 +44,7 @@ export default function LoginForm() {
         navigate("/dashboard");
       }
 
+      console.log(res);
       actions.resetForm();
     } catch (error) {
       setLoading(false);
