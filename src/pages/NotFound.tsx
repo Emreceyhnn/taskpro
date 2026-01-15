@@ -1,5 +1,5 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
-import landingHero from "../assets/authpage.png";
+import landingHero from "../assets/authpage.webp";
 import { Link as RouterLink } from "react-router-dom";
 
 export default function NotFound() {

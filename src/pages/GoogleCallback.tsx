@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { confirmGoogleOAuth } from "../api/auth";
 import { Box, CircularProgress, Stack, useTheme } from "@mui/material";
-import landingHero from "../assets/authpage.png";
+import landingHero from "../assets/authpage.webp";
 
 export default function GoogleCallback() {
   useEffect(() => {

@@ -1,5 +1,5 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
-import landingHero from "../assets/authpage.png";
+import landingHero from "../assets/authpage.webp";
 import logo from "../assets/icon.svg";
 import { getGoogleOAuthUrl } from "../api/auth";
 import { Link as RouterLink } from "react-router-dom";
@@ -29,7 +29,7 @@ export default function LandingPage() {
           maxWidth={473}
           spacing={4}
         >
-          <img src={landingHero} width={162} height={162} />
+          <img src={landingHero} width={162} height={162} loading="eager" />
           <Stack direction={"row"} alignItems={"center"} spacing={1}>
             <img src={logo} width={48} height={48} alt="logo" />
             <Typography
