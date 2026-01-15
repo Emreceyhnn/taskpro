@@ -39,8 +39,7 @@ export default function RegisterForm() {
     try {
       setLoading(true);
       const res = await register(values);
-      console.log(res);
-      if (res.status === 201) {
+      if (res.success) {
         setLoading(false);
         navigate("/auth/sign-in");
       }
