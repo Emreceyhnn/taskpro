@@ -5,7 +5,7 @@ export default function BlankPage() {
   return (
     <Box
       sx={{
-        width: { md: "100%", mobile: "90%t" },
+        width: "100%",
         height: "100%",
         display: "flex",
         alignItems: "center",
@@ -14,7 +14,7 @@ export default function BlankPage() {
     >
       <Typography
         sx={{
-          maxWidth: { md: 486, mobile: "90dvw" },
+          maxWidth: { md: 486, mobile: "90%" },
           textAlign: "center",
           maxHeight: 72,
           letterSpacing: "-2%",
