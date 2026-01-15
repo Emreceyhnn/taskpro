@@ -29,6 +29,7 @@ export default function LoginForm() {
   /* --------------------------------- STATES --------------------------------- */
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   /* -------------------------------- HANDLERS -------------------------------- */
   const handleSubmit = async (
@@ -38,10 +39,14 @@ export default function LoginForm() {
     try {
       setLoading(true);
       const res = await login(values);
-
+      console.log(res);
       if (res.status === 200) {
         setLoading(false);
         navigate("/dashboard");
+      }
+
+      if (res.status === 401) {
+        setLoading(false);
       }
 
       console.log(res);
