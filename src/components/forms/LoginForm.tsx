@@ -50,7 +50,7 @@ export default function LoginForm() {
       }
     } catch (error) {
       console.log(error);
-      actions.setFieldError("password", "Something went wrong. Try again.");
+      actions.setFieldError("password", "Email or password is incorrect");
     } finally {
       setLoading(false);
     }
