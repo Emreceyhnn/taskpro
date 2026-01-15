@@ -29,7 +29,6 @@ export default function LoginForm() {
   /* --------------------------------- STATES --------------------------------- */
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  // const [error, setError] = useState<string>("");
 
   /* -------------------------------- HANDLERS -------------------------------- */
   const handleSubmit = async (
@@ -38,22 +37,22 @@ export default function LoginForm() {
   ) => {
     try {
       setLoading(true);
+
       const res = await login(values);
-      console.log(res);
+
       if (res.status === 200) {
-        setLoading(false);
         navigate("/dashboard");
+        return;
       }
 
       if (res.status === 401) {
-        setLoading(false);
+        actions.setFieldError("password", "Email or password is incorrect");
       }
-
-      console.log(res);
-      actions.resetForm();
     } catch (error) {
+      console.log(error);
+      actions.setFieldError("password", "Something went wrong. Try again.");
+    } finally {
       setLoading(false);
-      console.error(error);
     }
   };
 
