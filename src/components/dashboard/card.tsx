@@ -57,7 +57,13 @@ export default function Card(params: TaskSectionType) {
     return dayjs(date).isSame(dayjs(), "day");
   };
 
-  const deadlineToday = isToday(tasks.deadline);
+  const isPassed = (date?: string | Date | dayjs.Dayjs | null): boolean => {
+    if (!date) return false;
+
+    return dayjs(date).isBefore(dayjs(), "day");
+  };
+
+  const deadlineToday = isToday(tasks.deadline) || isPassed(tasks.deadline);
 
   const isClose = deadlineToday;
 
