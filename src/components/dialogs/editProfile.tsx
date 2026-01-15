@@ -169,7 +169,7 @@ export default function EditProfileDialog(params: Params) {
                           <PersonIcon
                             sx={{
                               fontSize: 68,
-                              color: theme.palette.background.default,
+                              color: theme.palette.icon.secondary,
                             }}
                           />
                         )}
