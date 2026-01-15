@@ -63,7 +63,7 @@ export default function SideBar({
     <>
       <Box
         maxWidth={260}
-        minHeight={"100vh"}
+        minHeight={"100dvh"}
         bgcolor={theme.palette.background.sidebar}
         flexDirection={"column"}
         display={"flex"}
