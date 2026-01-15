@@ -14,6 +14,7 @@ export default function CircularIndeterminate() {
         backgroundColor: theme.palette.buttonPrimary.buttonBg,
         display: "flex",
         flexDirection: "row",
+        justifyContent: "center",
         alignItems: "center",
         gap: 1,
       }}

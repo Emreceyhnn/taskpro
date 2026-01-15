@@ -1,13 +1,23 @@
-// authMiddleware.ts
-import { refreshToken } from "./auth";
+/* -------------------------------------------------------------------------- */
+/*                              AUTH MIDDLEWARE                               */
+/* -------------------------------------------------------------------------- */
+/*  Bu middleware:
+    - SADECE route guard yapar
+    - accessToken VAR/YOK kontrolü yapar
+    - redirect yönetir
+    - refresh token / backend / async İÇERMEZ
+*/
+/* -------------------------------------------------------------------------- */
+
+import { getAccessToken } from "../lib/token";
 
 /* -------------------------------------------------------------------------- */
 /*                                   STATE                                    */
 /* -------------------------------------------------------------------------- */
 
-let intervalId: number | null = null;
-let isChecking = false;
+let isStarted = false;
 
+/* history patch için */
 let isHistoryPatched = false;
 let originalPushState: History["pushState"] | null = null;
 let originalReplaceState: History["replaceState"] | null = null;
@@ -27,7 +37,9 @@ const isAuthPage = (path: string) =>
 /* -------------------------------------------------------------------------- */
 
 const redirectToLanding = () => {
-  if (window.location.pathname !== "/") window.location.replace("/");
+  if (window.location.pathname !== "/") {
+    window.location.replace("/");
+  }
 };
 
 const redirectToDashboard = () => {
@@ -37,7 +49,28 @@ const redirectToDashboard = () => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                              ROUTE CHANGE HOOK                             */
+/*                              AUTH CHECK (SYNC)                             */
+/* -------------------------------------------------------------------------- */
+
+const checkAuth = () => {
+  const path = window.location.pathname;
+  const hasToken = Boolean(getAccessToken());
+
+  /* 🔒 Login VAR → auth sayfaları yasak */
+  if (hasToken && isAuthPage(path)) {
+    redirectToDashboard();
+    return;
+  }
+
+  /* 🔓 Login YOK → protected sayfalar yasak */
+  if (!hasToken && isProtectedPath(path)) {
+    redirectToLanding();
+    return;
+  }
+};
+
+/* -------------------------------------------------------------------------- */
+/*                         ROUTE CHANGE DETECTION                              */
 /* -------------------------------------------------------------------------- */
 
 const emitLocationChange = () => {
@@ -79,88 +112,51 @@ const unpatchHistory = () => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                                AUTH CHECK                                  */
-/* -------------------------------------------------------------------------- */
-
-let isLoggedIn: boolean | null = null;
-
-const checkAuth = async () => {
-  const path = window.location.pathname;
-
-  if (isChecking) return;
-  isChecking = true;
-
-  // 🔥 AUTH STATE HENÜZ BİLİNMİYORSA → 1 KERE REFRESH DENE
-  if (isLoggedIn === null) {
-    try {
-      await refreshToken();
-      isLoggedIn = true;
-    } catch {
-      isLoggedIn = false;
-    }
-  }
-
-  // 🔒 LOGIN VAR → auth sayfaları yasak
-  if (isLoggedIn && isAuthPage(path)) {
-    redirectToDashboard();
-    isChecking = false;
-    return;
-  }
-
-  // 🔓 LOGIN YOK → protected sayfalar yasak
-  if (!isLoggedIn && isProtectedPath(path)) {
-    redirectToLanding();
-    isChecking = false;
-    return;
-  }
-
-  isChecking = false;
-};
-
-/* -------------------------------------------------------------------------- */
 /*                              EVENT HANDLERS                                */
 /* -------------------------------------------------------------------------- */
 
-const onFocusCheck = () => void checkAuth();
-
-const onVisibilityCheck = () => {
-  if (document.visibilityState === "visible") void checkAuth();
+const onLocationChange = () => {
+  checkAuth();
 };
 
-const onLocationChange = () => void checkAuth();
+const onFocusCheck = () => {
+  checkAuth();
+};
+
+const onVisibilityCheck = () => {
+  if (document.visibilityState === "visible") {
+    checkAuth();
+  }
+};
 
 /* -------------------------------------------------------------------------- */
 /*                              PUBLIC API                                    */
 /* -------------------------------------------------------------------------- */
 
 export const startAuthMiddleware = () => {
-  if (intervalId !== null) return;
+  if (isStarted) return;
+  isStarted = true;
 
   patchHistoryOnce();
 
-  // Route değişiminde anında kontrol
+  /* route change */
   window.addEventListener("locationchange", onLocationChange, {
     passive: true,
   });
 
-  // İlk açılış
-  void checkAuth();
-
-  // Periyodik kontrol
-  intervalId = window.setInterval(() => void checkAuth(), 60_000);
-
-  // Tab focus / visibility
+  /* tab focus / visibility */
   window.addEventListener("focus", onFocusCheck, { passive: true });
   document.addEventListener("visibilitychange", onVisibilityCheck, {
     passive: true,
   });
+
+  /* ilk kontrol */
+  checkAuth();
 };
 
 export const stopAuthMiddleware = () => {
-  if (intervalId !== null) {
-    clearInterval(intervalId);
-    intervalId = null;
-  }
+  if (!isStarted) return;
+  isStarted = false;
 
   window.removeEventListener("locationchange", onLocationChange);
   window.removeEventListener("focus", onFocusCheck);

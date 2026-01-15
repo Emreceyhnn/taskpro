@@ -16,7 +16,6 @@ import NotFound from "./pages/NotFound";
 
 function App() {
   const [mode, setMode] = useState<ThemeMode>("dark");
-
   const theme = useMemo(() => getTheme(mode), [mode]);
 
   useEffect(() => {
