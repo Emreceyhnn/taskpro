@@ -14,7 +14,7 @@ export default function BlankPage() {
     >
       <Typography
         sx={{
-          maxWidth: 486,
+          maxWidth: { md: 486, mobile: "90dvw" },
           textAlign: "center",
           maxHeight: 72,
           letterSpacing: "-2%",

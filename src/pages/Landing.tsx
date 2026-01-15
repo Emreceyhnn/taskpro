@@ -46,6 +46,7 @@ export default function LandingPage() {
           </Stack>
           <Typography
             sx={{
+              maxWidth: { md: "auto", mobile: "90dvw" },
               fontWeight: 400,
               fontSize: "14px",
               letterSpacing: "-2%",
