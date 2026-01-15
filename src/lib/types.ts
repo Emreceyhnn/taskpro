@@ -1,7 +1,7 @@
 export const PRIORITIES = {
-  high: "#8FA1D0",
+  low: "#8FA1D0",
   medium: "#E09CB5",
-  low: "#BEDBB0",
+  high: "#BEDBB0",
   none: "rgb(121, 121, 121)",
 } as const;
 
