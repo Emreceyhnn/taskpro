@@ -18,21 +18,21 @@ const iconStar = `${sprite}#icon-star-04`;
 export const iconLogo = `${sprite}#icon-logo`;
 
 import _1 from "../assets/desktop/1.png";
-import _2 from "../assets/desktop/2.jpg";
-import _3 from "../assets/desktop/3.jpg";
-import _4 from "../assets/desktop/4.jpg";
-import _5 from "../assets/desktop/5.jpg";
-import _6 from "../assets/desktop/6.jpg";
-import _7 from "../assets/desktop/7.jpg";
-import _8 from "../assets/desktop/8.jpg";
-import _9 from "../assets/desktop/9.jpg";
-import _10 from "../assets/desktop/10.jpg";
-import _11 from "../assets/desktop/11.jpg";
-import _12 from "../assets/desktop/12.jpg";
-import _13 from "../assets/desktop/13.jpg";
-import _14 from "../assets/desktop/14.jpg";
-import _15 from "../assets/desktop/15.jpg";
-import _16 from "../assets/desktop/16.jpg";
+import _2 from "../assets/desktop/2.webp";
+import _3 from "../assets/desktop/3.webp";
+import _4 from "../assets/desktop/4.webp";
+import _5 from "../assets/desktop/5.webp";
+import _6 from "../assets/desktop/6.webp";
+import _7 from "../assets/desktop/7.webp";
+import _8 from "../assets/desktop/8.webp";
+import _9 from "../assets/desktop/9.webp";
+import _10 from "../assets/desktop/10.webp";
+import _11 from "../assets/desktop/11.webp";
+import _12 from "../assets/desktop/12.webp";
+import _13 from "../assets/desktop/13.webp";
+import _14 from "../assets/desktop/14.webp";
+import _15 from "../assets/desktop/15.webp";
+import _16 from "../assets/desktop/16.webp";
 
 export interface IconType {
   key: string;
