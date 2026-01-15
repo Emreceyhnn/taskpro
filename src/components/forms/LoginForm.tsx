@@ -29,7 +29,7 @@ export default function LoginForm() {
   /* --------------------------------- STATES --------------------------------- */
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
+  // const [error, setError] = useState<string>("");
 
   /* -------------------------------- HANDLERS -------------------------------- */
   const handleSubmit = async (
