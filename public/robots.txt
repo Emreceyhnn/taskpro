@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://taskpro-omega.vercel.app/sitemap.xml
