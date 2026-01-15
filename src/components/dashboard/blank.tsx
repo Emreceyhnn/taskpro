@@ -5,7 +5,7 @@ export default function BlankPage() {
   return (
     <Box
       sx={{
-        width: "100%",
+        width: { md: "100%", mobile: "90%t" },
         height: "100%",
         display: "flex",
         alignItems: "center",
