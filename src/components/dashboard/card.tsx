@@ -44,12 +44,16 @@ export default function Card(params: TaskSectionType) {
     setDeleteDialog(false);
   };
 
-  const handlerForwarder = (movedColumn: string) => {
-    cardForwarder({
-      _id: tasks._id,
-      columnId: movedColumn,
-    });
-    onReset();
+  const handlerForwarder = async (movedColumn: string) => {
+    try {
+      await cardForwarder({
+        _id: tasks._id,
+        columnId: movedColumn,
+      });
+      onReset();
+    } catch (e) {
+      console.error("Forward failed", e);
+    }
   };
 
   const isToday = (date?: string | Date | dayjs.Dayjs | null) => {
