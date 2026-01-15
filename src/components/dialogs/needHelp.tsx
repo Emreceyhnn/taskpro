@@ -8,8 +8,8 @@ import {
 } from "../../lib/styled";
 import * as Yup from "yup";
 import { useState } from "react";
-import { needHelpApi } from "../../api/dashboard";
 import CircularIndeterminate from "../loading";
+import { needHelpApi } from "../../api/needHelp";
 
 /* ---------------------------------- TYPES --------------------------------- */
 interface Params {
@@ -54,6 +54,7 @@ export default function NeedHelpDialog(params: Params) {
     email: Yup.string().email("Invalid email").required("Email is required"),
     comment: Yup.string()
       .min(2, "Comment is too short")
+      .max(255, "Comment max contain 255 characters")
       .required("Comment is required"),
   });
 

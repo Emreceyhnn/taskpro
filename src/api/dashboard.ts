@@ -123,12 +123,3 @@ export const getAllTasks = async () => {
     console.log(error);
   }
 };
-
-interface NeedHelpValues {
-  email: string;
-  comment: string;
-}
-
-export const needHelpApi = async (data: NeedHelpValues) => {
-  console.log(data);
-};
