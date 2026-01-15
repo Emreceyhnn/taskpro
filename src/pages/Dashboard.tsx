@@ -96,7 +96,7 @@ export default function DashboardPage() {
               : "none",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          width: "100dvw",
+          minWidth: "100dvw",
           minHeight: "100dvh",
           display: "flex",
         }}
