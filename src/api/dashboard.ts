@@ -1,6 +1,5 @@
 import { api } from "./client";
 import type { Dayjs } from "dayjs";
-import axios from "axios";
 
 export interface AddBoardType {
   title: string;
