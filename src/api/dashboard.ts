@@ -121,18 +121,7 @@ export const getAllTasks = async () => {
     const res = await api.get("/dashboard");
     return res.data;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 404) {
-        return {
-          boards: [],
-          columns: [],
-          tasks: [],
-          isEmpty: true,
-        };
-      }
-    }
-
-    throw error;
+    console.log(error);
   }
 };
 
