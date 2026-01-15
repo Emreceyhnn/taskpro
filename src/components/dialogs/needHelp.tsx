@@ -121,7 +121,7 @@ export default function NeedHelpDialog(params: Params) {
                 {loading ? (
                   <CircularIndeterminate />
                 ) : (
-                  <StyledButton>Send</StyledButton>
+                  <StyledButton type="submit">Send</StyledButton>
                 )}
               </Stack>
             </Form>
