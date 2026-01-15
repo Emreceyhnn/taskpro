@@ -37,7 +37,13 @@ export default function Dashboard({ data, onReset, filter }: Params) {
 
   return (
     <>
-      <Stack p={"10px 24px 10px 24px"} direction={"column"} gap={"38px"}>
+      <Stack
+        p={"10px 24px 10px 24px"}
+        direction={"column"}
+        gap={"38px"}
+        maxWidth={"100%"}
+        overflow={"none"}
+      >
         <Stack
           direction={"row"}
           alignItems={"center"}
