@@ -49,7 +49,7 @@ export default function EditCardDialog(params: Params) {
   /* --------------------------------- handler -------------------------------- */
   const handleSubmit = async (
     values: EditCardType,
-    actions: FormikHelpers<EditCardType>
+    actions: FormikHelpers<EditCardType>,
   ) => {
     try {
       setLoading(true);
@@ -107,6 +107,7 @@ export default function EditCardDialog(params: Params) {
   const validation = Yup.object({
     title: Yup.string()
       .min(2, "Title is too short")
+      .max(50, "Title is too long")
       .required("Title is required"),
     description: Yup.string()
       .min(2, "Description is too short")

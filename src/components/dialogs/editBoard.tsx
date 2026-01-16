@@ -117,6 +117,7 @@ export default function EditBoard({ isOpen, onClose, board, onReset }: Params) {
   const validation = Yup.object({
     title: Yup.string()
       .min(2, "Title is too short")
+      .max(50, "Title is too long")
       .required("Title is required"),
   });
 

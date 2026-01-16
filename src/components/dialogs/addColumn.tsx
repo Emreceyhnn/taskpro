@@ -27,7 +27,7 @@ export default function AddColumnDialog(params: Params) {
   /* --------------------------------- handler -------------------------------- */
   const handleSubmit = async (
     values: AddColumnType,
-    actions: FormikHelpers<AddColumnType>
+    actions: FormikHelpers<AddColumnType>,
   ) => {
     try {
       setLoading(true);
@@ -50,6 +50,7 @@ export default function AddColumnDialog(params: Params) {
   const validation = Yup.object({
     name: Yup.string()
       .min(2, "Title is too short")
+      .max(50, "Title is too long")
       .required("Title is required"),
   });
 

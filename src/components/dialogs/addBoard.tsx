@@ -44,7 +44,7 @@ export default function AddBoard(params: Params) {
   /* --------------------------------- handler -------------------------------- */
   const handleSubmit = async (
     values: AddBoardType,
-    actions: FormikHelpers<AddBoardType>
+    actions: FormikHelpers<AddBoardType>,
   ) => {
     try {
       setLoading(true);
@@ -66,6 +66,7 @@ export default function AddBoard(params: Params) {
   const AddBoardValidation = Yup.object({
     title: Yup.string()
       .min(2, "Title is too short")
+      .max(50, "Title is too long")
       .required("Title is required"),
   });
 

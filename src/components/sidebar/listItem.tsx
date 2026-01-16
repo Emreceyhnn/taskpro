@@ -76,7 +76,11 @@ export default function SideBarListItem({
               fontWeight={500}
               fontSize={14}
               color={theme.palette.text.sideBarText}
-              sx={{ textWrap: "nowrap" }}
+              sx={{
+                textWrap: "nowrap",
+                textOverflow: "ellipsis",
+                maxWidth: 100,
+              }}
             >
               {title}
             </Typography>
