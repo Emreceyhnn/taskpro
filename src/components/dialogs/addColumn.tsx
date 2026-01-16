@@ -50,7 +50,7 @@ export default function AddColumnDialog(params: Params) {
   const validation = Yup.object({
     name: Yup.string()
       .min(2, "Title is too short")
-      .max(50, "Title is too long")
+      .max(30, "Title is too long")
       .required("Title is required"),
   });
 
