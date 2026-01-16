@@ -148,7 +148,7 @@ export default function AddCardDialog(params: Params) {
               boardId: boardId,
               title: "",
               description: "",
-              priority: "",
+              priority: "none",
               deadline: dayjs(),
             }}
             validationSchema={validation}
