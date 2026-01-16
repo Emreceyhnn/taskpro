@@ -155,7 +155,7 @@ export default function AddCardDialog(params: Params) {
             onSubmit={handleSubmit}
           >
             <Form>
-              <Stack spacing={2} mt={3}>
+              <Stack spacing={3} mt={3}>
                 <Field name="title">
                   {({ field, meta }: any) => (
                     <StyledTextField
