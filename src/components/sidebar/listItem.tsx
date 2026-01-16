@@ -77,9 +77,9 @@ export default function SideBarListItem({
               fontSize={14}
               color={theme.palette.text.sideBarText}
               noWrap
+              overflow={"hidden"}
               sx={{
                 maxWidth: 100,
-                overflow: "hidden",
                 textOverflow: "ellipsis",
               }}
             >
