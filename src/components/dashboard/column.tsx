@@ -68,8 +68,9 @@ export default function Column(params: ColumnsSectionsType) {
               fontSize: 14,
               color: theme.palette.text.primary,
               textWrap: "nowrap",
-              textOverflow: "ellipsis",
               maxWidth: 100,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
             }}
           >
             {columns.name}

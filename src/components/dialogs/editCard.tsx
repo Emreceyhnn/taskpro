@@ -138,7 +138,7 @@ export default function EditCardDialog(params: Params) {
         />
       </IconButton>
       <Stack p={3} direction={"column"} spacing={1}>
-        <Typography color={theme.palette.text.primary}>Add Card</Typography>
+        <Typography color={theme.palette.text.primary}>Edit Card</Typography>
         <Stack>
           <Formik<EditCardType>
             initialValues={{

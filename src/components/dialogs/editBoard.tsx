@@ -145,7 +145,7 @@ export default function EditBoard({ isOpen, onClose, board, onReset }: Params) {
         <CloseIcon fontSize="small" />
       </IconButton>
       <Stack p={3} direction={"column"} spacing={1}>
-        <Typography>New Board</Typography>
+        <Typography>Edit Board</Typography>
         <Stack>
           <Formik<Board>
             initialValues={{

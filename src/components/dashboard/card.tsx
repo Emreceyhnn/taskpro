@@ -99,8 +99,9 @@ export default function Card(params: TaskSectionType) {
               letterSpacing: "-2%",
               color: theme.palette.text.primary,
               textWrap: "nowrap",
-              textOverflow: "ellipsis",
               maxWidth: 100,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
             }}
           >
             {tasks.title}
