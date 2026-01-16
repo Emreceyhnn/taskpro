@@ -6,6 +6,10 @@ It is designed with performance, scalability, and real-world usability as first-
 🔗 Live Demo: https://taskpro-omega.vercel.app/
 🔗 Backend: https://taskpro-backend-57d3.onrender.com/
 
+Swagger docs: https://taskpro-backend-57d3.onrender.com/api-docs/
+ 
+
+
 🚀 Features
 
 Board / Column / Task based workflow
