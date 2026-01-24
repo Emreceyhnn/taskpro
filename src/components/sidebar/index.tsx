@@ -153,19 +153,17 @@ export default function SideBar({
         </Stack>
         <Stack mt={1.5} maxHeight={"60vh"} overflow={"hidden"}>
           {!isEmpty &&
-            (boards && boards.length > 0
-              ? boards.map((board) => (
-                  <SideBarListItem
-                    key={board._id}
-                    board={board}
-                    isActive={activeBoardId === board._id}
-                    onClick={() => handleSelectBoard(board)}
-                    onReset={onReset}
-                  />
-                ))
-              : Array.from({ length: 3 }).map((_, i) => (
-                  <ListItemSkeleton key={i} />
-                )))}
+            (
+              boards?.map((board) => (
+                <SideBarListItem
+                  key={board._id}
+                  board={board}
+                  isActive={activeBoardId === board._id}
+                  onClick={() => handleSelectBoard(board)}
+                  onReset={onReset}
+                />
+              ))
+            )}
         </Stack>
         <Stack mt={"auto"} p={3} spacing={2}>
           <Box
