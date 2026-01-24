@@ -22,7 +22,7 @@ function App() {
     startAuthMiddleware();
     return () => stopAuthMiddleware();
   }, []);
-
+  //
   return (
     <ThemeContext.Provider value={{ mode, setMode }}>
       <ThemeProvider theme={theme}>
