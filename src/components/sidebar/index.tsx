@@ -196,6 +196,7 @@ export default function SideBar({
                 },
               }}
             >
+
               <img src={plant} width={70} height={78} alt="plant" />
               <Typography
                 sx={{
